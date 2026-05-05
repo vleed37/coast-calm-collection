@@ -167,7 +167,7 @@ function PropertyPage() {
       <section className="py-32 md:py-40 px-6 bg-mist/40">
         <Reveal>
           <p className="font-display italic text-4xl md:text-5xl text-ink text-center max-w-3xl mx-auto leading-[1.3]">
-            "{extras.bandQuote}"
+            "{property.pullQuote}"
           </p>
         </Reveal>
       </section>
@@ -186,10 +186,10 @@ function PropertyPage() {
           <Reveal>
             <span className="smallcaps text-warmth">The Setting</span>
             <h2 className="font-display text-4xl md:text-5xl font-light mt-5 leading-[1.05]">
-              {extras.setting.heading}
+              Where you'll be.
             </h2>
             <div className="mt-8 space-y-5 text-ink/80 leading-[1.8]">
-              {extras.setting.paragraphs.map((p, i) => (
+              {settingParagraphs.map((p, i) => (
                 <p key={i}>{p}</p>
               ))}
             </div>
@@ -205,7 +205,7 @@ function PropertyPage() {
         <Reveal>
           <span className="smallcaps text-warmth">The Experience</span>
           <div className="mt-16 flex flex-col">
-            {extras.experience.map((v, i) => (
+            {property.experienceVignettes.map((v, i) => (
               <div key={v.title} className={`py-8 ${i > 0 ? "border-t border-mist" : ""}`}>
                 <h3 className="font-display text-3xl md:text-4xl font-light">{v.title}</h3>
                 <p className="mt-4 text-ink/80 max-w-xl mx-auto leading-[1.8]">{v.body}</p>
@@ -272,7 +272,7 @@ function PropertyPage() {
           <Reveal>
             <span className="smallcaps text-warmth">On the Map</span>
             <div className="mt-12 bg-cream">
-              <CoastMap pin={extras.pin} />
+              <CoastMap pin={pin} />
             </div>
           </Reveal>
         </div>
