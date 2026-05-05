@@ -18,6 +18,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as PropertiesSlugRouteImport } from './routes/properties_.$slug'
 import { Route as AdminLoginRouteImport } from './routes/admin_.login'
+import { Route as AdminPropertiesIndexRouteImport } from './routes/admin.properties.index'
+import { Route as AdminPropertiesNewRouteImport } from './routes/admin.properties.new'
 
 const PropertiesRoute = PropertiesRouteImport.update({
   id: '/properties',
@@ -64,6 +66,16 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminPropertiesIndexRoute = AdminPropertiesIndexRouteImport.update({
+  id: '/properties/',
+  path: '/properties/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPropertiesNewRoute = AdminPropertiesNewRouteImport.update({
+  id: '/properties/new',
+  path: '/properties/new',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -75,6 +87,8 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/properties/$slug': typeof PropertiesSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/properties/new': typeof AdminPropertiesNewRoute
+  '/admin/properties/': typeof AdminPropertiesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -85,6 +99,8 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/properties/$slug': typeof PropertiesSlugRoute
   '/admin': typeof AdminIndexRoute
+  '/admin/properties/new': typeof AdminPropertiesNewRoute
+  '/admin/properties': typeof AdminPropertiesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -97,6 +113,8 @@ export interface FileRoutesById {
   '/admin_/login': typeof AdminLoginRoute
   '/properties_/$slug': typeof PropertiesSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/properties/new': typeof AdminPropertiesNewRoute
+  '/admin/properties/': typeof AdminPropertiesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -110,6 +128,8 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/properties/$slug'
     | '/admin/'
+    | '/admin/properties/new'
+    | '/admin/properties/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -120,6 +140,8 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/properties/$slug'
     | '/admin'
+    | '/admin/properties/new'
+    | '/admin/properties'
   id:
     | '__root__'
     | '/'
@@ -131,6 +153,8 @@ export interface FileRouteTypes {
     | '/admin_/login'
     | '/properties_/$slug'
     | '/admin/'
+    | '/admin/properties/new'
+    | '/admin/properties/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -209,15 +233,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/properties/': {
+      id: '/admin/properties/'
+      path: '/properties'
+      fullPath: '/admin/properties/'
+      preLoaderRoute: typeof AdminPropertiesIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/properties/new': {
+      id: '/admin/properties/new'
+      path: '/properties/new'
+      fullPath: '/admin/properties/new'
+      preLoaderRoute: typeof AdminPropertiesNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminPropertiesNewRoute: typeof AdminPropertiesNewRoute
+  AdminPropertiesIndexRoute: typeof AdminPropertiesIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
+  AdminPropertiesNewRoute: AdminPropertiesNewRoute,
+  AdminPropertiesIndexRoute: AdminPropertiesIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
@@ -235,3 +277,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
