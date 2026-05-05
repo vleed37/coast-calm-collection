@@ -1,6 +1,6 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ReactNode, useState } from "react";
-import { properties } from "@/data/properties";
+import { EnquiryForm } from "./EnquiryForm";
 
 export function EnquirySheet({ trigger, defaultProperty }: { trigger: ReactNode; defaultProperty?: string }) {
   const [submitted, setSubmitted] = useState(false);
@@ -18,45 +18,11 @@ export function EnquirySheet({ trigger, defaultProperty }: { trigger: ReactNode;
             <p className="text-ink/70 mt-3">We'll be in touch.</p>
           </div>
         ) : (
-          <form
-            className="px-6 pb-10 space-y-5"
-            onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}
-          >
-            <Field label="Name" name="name" />
-            <Field label="Email" name="email" type="email" />
-            <Field label="Phone" name="phone" type="tel" />
-            <div className="flex flex-col gap-2">
-              <label className="smallcaps text-ink/60">Property of interest</label>
-              <select name="property" defaultValue={defaultProperty ?? ""} className="bg-transparent border-b border-mist py-2 focus:outline-none focus:border-ocean">
-                <option value="">I'm not sure yet</option>
-                {properties.map((p) => (
-                  <option key={p.id} value={p.id}>{p.name}</option>
-                ))}
-              </select>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <Field label="Check-in" name="checkin" type="date" />
-              <Field label="Check-out" name="checkout" type="date" />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label className="smallcaps text-ink/60">Message</label>
-              <textarea rows={4} className="bg-transparent border-b border-mist py-2 focus:outline-none focus:border-ocean resize-none" />
-            </div>
-            <button type="submit" className="w-full bg-ocean text-cream py-4 smallcaps hover:bg-ink transition-colors">
-              Send enquiry
-            </button>
-          </form>
+          <div className="px-6 pb-10 pt-6">
+            <EnquiryForm defaultProperty={defaultProperty} onSubmitted={() => setSubmitted(true)} />
+          </div>
         )}
       </SheetContent>
     </Sheet>
-  );
-}
-
-function Field({ label, name, type = "text" }: { label: string; name: string; type?: string }) {
-  return (
-    <div className="flex flex-col gap-2">
-      <label className="smallcaps text-ink/60">{label}</label>
-      <input type={type} name={name} className="bg-transparent border-b border-mist py-2 focus:outline-none focus:border-ocean" />
-    </div>
   );
 }
