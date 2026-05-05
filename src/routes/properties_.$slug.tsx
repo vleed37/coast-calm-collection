@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { buildHead, lodgingGraph, breadcrumbGraph, truncateDescription } from "@/lib/seo";
 import { useEffect, useState } from "react";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
@@ -106,17 +107,27 @@ export const Route = createFileRoute("/properties_/$slug")({
     if (!property) throw notFound();
     return { property };
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [
-          { title: `${loaderData.property.name} — [BRAND]` },
-          { name: "description", content: loaderData.property.description },
-          { property: "og:title", content: `${loaderData.property.name} — [BRAND]` },
-          { property: "og:description", content: loaderData.property.description },
-          { property: "og:image", content: loaderData.property.heroImage },
-        ]
-      : [],
-  }),
+  head: ({ loaderData }) => {
+    if (!loaderData) return {};
+    const p = loaderData.property;
+    const longText = [p.description, ...p.story].join(" ");
+    return buildHead({
+      title: `${p.name} — Luxury Villa in ${p.location} | [BRAND]`,
+      description: truncateDescription(longText, 155),
+      path: `/properties/${p.id}`,
+      image: p.heroImage,
+      type: "product",
+      keywords: `${p.location} villa, ${p.location} self catering, ${p.beds} bedroom holiday home, ${p.location} accommodation, west coast luxury rental`,
+      structuredData: [
+        lodgingGraph(p),
+        breadcrumbGraph([
+          { name: "Home", path: "/" },
+          { name: "Properties", path: "/properties" },
+          { name: p.name, path: `/properties/${p.id}` },
+        ]),
+      ],
+    });
+  },
   notFoundComponent: () => (
     <div className="min-h-screen flex items-center justify-center">
       <p className="font-display italic text-3xl">House not found.</p>

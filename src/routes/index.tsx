@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { buildHead, organizationGraph } from "@/lib/seo";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { PropertyCard } from "@/components/site/PropertyCard";
@@ -7,14 +8,17 @@ import { EnquirySheet } from "@/components/site/EnquirySheet";
 import { properties } from "@/data/properties";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "[BRAND] — Where the coastline pauses." },
-      { name: "description", content: "A small collection of homes on the West Coast. Stay slowly." },
-      { property: "og:title", content: "[BRAND] — Where the coastline pauses." },
-      { property: "og:description", content: "A small collection of homes on the West Coast." },
-    ],
-  }),
+  head: () =>
+    buildHead({
+      title: "Luxury West Coast Villa Rentals | [BRAND]",
+      description:
+        "A small collection of self-catering villas on South Africa's West Coast. Shelley Point, Britannia Bay, St Helena Bay. Direct booking enquiries — no platform fees.",
+      keywords:
+        "west coast villa rental, luxury holiday home south africa, shelley point accommodation, britannia bay villa, st helena bay self catering, west coast airbnb alternative",
+      path: "/",
+      type: "website",
+      structuredData: organizationGraph(),
+    }),
   component: Home,
 });
 

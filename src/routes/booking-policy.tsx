@@ -1,19 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { buildHead, faqGraph } from "@/lib/seo";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { Reveal } from "@/components/site/Reveal";
-
-export const Route = createFileRoute("/booking-policy")({
-  head: () => ({
-    meta: [
-      { title: "Booking Policy — [BRAND]" },
-      { name: "description", content: "Reservations, payment, cancellation, house rules." },
-      { property: "og:title", content: "Booking Policy — [BRAND]" },
-      { property: "og:description", content: "Reservations, payment, cancellation, house rules." },
-    ],
-  }),
-  component: PolicyPage,
-});
 
 const sections = [
   { h: "Reservations", b: "Houses are held by enquiry. We confirm in writing, often within the day. A reservation is held for seven days from confirmation while the deposit is arranged." },
@@ -22,6 +11,19 @@ const sections = [
   { h: "House Rules", b: "These are quiet houses. No events, no loud music after ten, no smoking inside. Pets by prior arrangement. Numbers must not exceed the stated guest count without written agreement." },
   { h: "Check-In & Check-Out", b: "Arrival from 14:00. Departure by 11:00. We can sometimes hold luggage on either side. Late departures by arrangement, subject to availability." },
 ];
+
+export const Route = createFileRoute("/booking-policy")({
+  head: () =>
+    buildHead({
+      title: "Booking Policy | [BRAND]",
+      description:
+        "How to stay with us — reservations, payment terms, cancellation policy, house rules, and check-in details for our West Coast villas.",
+      path: "/booking-policy",
+      type: "article",
+      structuredData: faqGraph(sections.map((s) => ({ q: s.h, a: s.b }))),
+    }),
+  component: PolicyPage,
+});
 
 function PolicyPage() {
   return (

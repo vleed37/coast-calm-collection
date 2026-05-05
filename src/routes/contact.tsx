@@ -1,18 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { buildHead } from "@/lib/seo";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { EnquiryForm } from "@/components/site/EnquiryForm";
 import { useState } from "react";
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: "Contact — [BRAND]" },
-      { name: "description", content: "Begin a conversation. We reply within a day." },
-      { property: "og:title", content: "Contact — [BRAND]" },
-      { property: "og:description", content: "Begin a conversation. We reply within a day." },
-    ],
-  }),
+  head: () =>
+    buildHead({
+      title: "Begin a Conversation | [BRAND]",
+      description:
+        "Direct booking enquiries for our West Coast villas. We reply within a day, often sooner.",
+      path: "/contact",
+      type: "website",
+    }),
   component: ContactPage,
 });
 
