@@ -5,10 +5,6 @@ import appCss from "../styles.css?url";
 function NotFoundComponent() {
   return (
     <div className="min-h-screen bg-cream flex items-center justify-center px-6">
-      <head>
-        <title>Page Not Found | [BRAND]</title>
-        <meta name="robots" content="noindex, follow" />
-      </head>
       <div className="max-w-xl text-center">
         <span className="smallcaps text-warmth">404</span>
         <h1 className="font-display text-4xl md:text-6xl font-light mt-6 leading-[1.05]">
