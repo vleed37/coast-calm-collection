@@ -19,12 +19,12 @@ export const Route = createFileRoute("/guide")({
 const filters = ["Eat", "Drink", "Walk", "Watch", "Wander"] as const;
 
 const articles = [
-  { cat: "Eat", title: "The bakery that opens at six.", desc: "A small door, a long line by quarter past. The croissants come out at 6:14, every morning.", img: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1600&q=80" },
-  { cat: "Walk", title: "A walk between the lighthouses.", desc: "Three hours along the cliff if you take it slow. Two if the wind is up. Take water.", img: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=1600&q=80" },
-  { cat: "Eat", title: "Where to find the oysters.", desc: "A wooden shack, a chalkboard, a bucket of ice. Cash only. Closed Tuesdays.", img: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=1600&q=80" },
-  { cat: "Watch", title: "The pelicans at five o'clock.", desc: "They come in low across the bay every evening. Sit on the rocks. Do nothing.", img: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1600&q=80" },
-  { cat: "Drink", title: "A small wine list, well chosen.", desc: "Twelve bottles. Eleven from within an hour. The other one matters less.", img: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1600&q=80" },
-  { cat: "Wander", title: "The Saturday market at Paternoster.", desc: "Linen, fish, two kinds of honey. Get there before nine if you can.", img: "https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=1600&q=80" },
+  { cat: "Eat", title: "The bakery that opens at six.", desc: "A small unmarked door behind the post office. The line forms by quarter past. Croissants come out at six-fourteen, sourdough at half past. Bring cash and a basket — they sell out fast.", img: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1600&q=80" },
+  { cat: "Walk", title: "A walk between the lighthouses.", desc: "Three hours along the cliff path if you take it slow. Two if the wind is up. Take water, take a windbreaker, take your time. The peninsula does the rest.", img: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=1600&q=80" },
+  { cat: "Eat", title: "Where to find the oysters.", desc: "A wooden shack at the back of the harbour, a chalkboard for prices, a galvanised bucket for ice. Cash only. Closed Tuesdays. The shucker's name is Andries.", img: "https://images.unsplash.com/photo-1642166805142-0426a75bf373?auto=format&fit=crop&w=1600&q=80" },
+  { cat: "Watch", title: "The pelicans at five o'clock.", desc: "They come in low across the bay every evening from October to March. Sit on the rocks west of the slipway. Don't film it. Just watch.", img: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1600&q=80" },
+  { cat: "Drink", title: "A small wine list, well chosen.", desc: "Eleven bottles, all from within an hour of the house. The bartender knows each grower by their first name. The other one matters less.", img: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1600&q=80" },
+  { cat: "Wander", title: "The Saturday market at Paternoster.", desc: "Linen, fish, two kinds of honey, hand-thrown ceramics. Get there before nine if you can. Coffee from the trailer in the corner. Stay until you've spoken to someone.", img: "https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=1600&q=80" },
 ];
 
 function GuidePage() {
@@ -62,16 +62,16 @@ function GuidePage() {
       </section>
 
       <section className="px-6 md:px-12 pb-32">
-        <div className="max-w-[1320px] mx-auto space-y-24 md:space-y-40">
+        <div className="max-w-[1320px] mx-auto">
           {articles
             .filter((a) => !active || a.cat === active)
             .map((a, i) => (
               <Reveal key={a.title}>
-                <article className={`grid md:grid-cols-2 gap-10 md:gap-16 items-center ${i % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""}`}>
-                  <div className="overflow-hidden bg-mist aspect-[4/5]">
+                <article className={`grid md:grid-cols-12 gap-10 md:gap-16 items-center py-16 ${i % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""}`}>
+                  <div className="md:col-span-7 overflow-hidden bg-mist aspect-[4/5]">
                     <img src={a.img} alt="" className="w-full h-full object-cover transition-transform duration-700 hover:scale-[1.04]" />
                   </div>
-                  <div className="max-w-md">
+                  <div className="md:col-span-5 flex flex-col justify-center max-w-md">
                     <span className="smallcaps text-warmth">{a.cat}</span>
                     <h2 className="font-display text-3xl md:text-4xl lg:text-5xl mt-6 font-light leading-[1.1]">{a.title}</h2>
                     <p className="mt-6 text-lg text-ink/80">{a.desc}</p>
