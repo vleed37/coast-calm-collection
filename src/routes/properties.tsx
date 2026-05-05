@@ -1,12 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, ErrorComponent } from "@tanstack/react-router";
 import { buildHead } from "@/lib/seo";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { PropertyCard } from "@/components/site/PropertyCard";
 import { Reveal } from "@/components/site/Reveal";
-import { properties } from "@/data/properties";
+import { fetchPublishedProperties } from "@/lib/queries/properties";
 
 export const Route = createFileRoute("/properties")({
+  loader: () => fetchPublishedProperties(),
+  errorComponent: ({ error }) => <ErrorComponent error={error} />,
   head: () =>
     buildHead({
       title: "The Collection — Three West Coast Villas | [BRAND]",
@@ -19,6 +21,7 @@ export const Route = createFileRoute("/properties")({
 });
 
 function PropertiesPage() {
+  const properties = Route.useLoaderData() as Awaited<ReturnType<typeof fetchPublishedProperties>>;
   return (
     <div className="page-fade bg-cream min-h-screen">
       <Nav />
