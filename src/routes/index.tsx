@@ -39,7 +39,7 @@ function Home() {
             <p className="smallcaps text-cream/80 mt-8">A small collection of homes on the West Coast.</p>
           </div>
         </div>
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-cue smallcaps text-cream/70">scroll</div>
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 scroll-cue smallcaps text-cream/70">scroll</div>
       </section>
 
       {/* MANIFESTO */}
