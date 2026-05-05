@@ -100,7 +100,7 @@ const EXTRAS: Record<string, Extras> = {
   },
 };
 
-export const Route = createFileRoute("/properties/$slug")({
+export const Route = createFileRoute("/properties_/$slug")({
   loader: ({ params }) => {
     const property = findProperty(params.slug);
     if (!property) throw notFound();

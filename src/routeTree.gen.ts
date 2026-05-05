@@ -14,7 +14,7 @@ import { Route as GuideRouteImport } from './routes/guide'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BookingPolicyRouteImport } from './routes/booking-policy'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as PropertiesSlugRouteImport } from './routes/properties.$slug'
+import { Route as PropertiesSlugRouteImport } from './routes/properties_.$slug'
 
 const PropertiesRoute = PropertiesRouteImport.update({
   id: '/properties',
@@ -42,9 +42,9 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const PropertiesSlugRoute = PropertiesSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => PropertiesRoute,
+  id: '/properties_/$slug',
+  path: '/properties/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -52,7 +52,7 @@ export interface FileRoutesByFullPath {
   '/booking-policy': typeof BookingPolicyRoute
   '/contact': typeof ContactRoute
   '/guide': typeof GuideRoute
-  '/properties': typeof PropertiesRouteWithChildren
+  '/properties': typeof PropertiesRoute
   '/properties/$slug': typeof PropertiesSlugRoute
 }
 export interface FileRoutesByTo {
@@ -60,7 +60,7 @@ export interface FileRoutesByTo {
   '/booking-policy': typeof BookingPolicyRoute
   '/contact': typeof ContactRoute
   '/guide': typeof GuideRoute
-  '/properties': typeof PropertiesRouteWithChildren
+  '/properties': typeof PropertiesRoute
   '/properties/$slug': typeof PropertiesSlugRoute
 }
 export interface FileRoutesById {
@@ -69,8 +69,8 @@ export interface FileRoutesById {
   '/booking-policy': typeof BookingPolicyRoute
   '/contact': typeof ContactRoute
   '/guide': typeof GuideRoute
-  '/properties': typeof PropertiesRouteWithChildren
-  '/properties/$slug': typeof PropertiesSlugRoute
+  '/properties': typeof PropertiesRoute
+  '/properties_/$slug': typeof PropertiesSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -96,7 +96,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/guide'
     | '/properties'
-    | '/properties/$slug'
+    | '/properties_/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -104,7 +104,8 @@ export interface RootRouteChildren {
   BookingPolicyRoute: typeof BookingPolicyRoute
   ContactRoute: typeof ContactRoute
   GuideRoute: typeof GuideRoute
-  PropertiesRoute: typeof PropertiesRouteWithChildren
+  PropertiesRoute: typeof PropertiesRoute
+  PropertiesSlugRoute: typeof PropertiesSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -144,35 +145,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/properties/$slug': {
-      id: '/properties/$slug'
-      path: '/$slug'
+    '/properties_/$slug': {
+      id: '/properties_/$slug'
+      path: '/properties/$slug'
       fullPath: '/properties/$slug'
       preLoaderRoute: typeof PropertiesSlugRouteImport
-      parentRoute: typeof PropertiesRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
-
-interface PropertiesRouteChildren {
-  PropertiesSlugRoute: typeof PropertiesSlugRoute
-}
-
-const PropertiesRouteChildren: PropertiesRouteChildren = {
-  PropertiesSlugRoute: PropertiesSlugRoute,
-}
-
-const PropertiesRouteWithChildren = PropertiesRoute._addFileChildren(
-  PropertiesRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BookingPolicyRoute: BookingPolicyRoute,
   ContactRoute: ContactRoute,
   GuideRoute: GuideRoute,
-  PropertiesRoute: PropertiesRouteWithChildren,
+  PropertiesRoute: PropertiesRoute,
+  PropertiesSlugRoute: PropertiesSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
