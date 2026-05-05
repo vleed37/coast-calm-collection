@@ -19,6 +19,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as PropertiesSlugRouteImport } from './routes/properties_.$slug'
 import { Route as AdminLoginRouteImport } from './routes/admin_.login'
 import { Route as AdminPropertiesIndexRouteImport } from './routes/admin.properties.index'
+import { Route as AdminGuideArticlesIndexRouteImport } from './routes/admin.guide-articles.index'
 import { Route as AdminPropertiesNewRouteImport } from './routes/admin.properties.new'
 import { Route as AdminPropertiesIdRouteImport } from './routes/admin.properties.$id'
 
@@ -72,6 +73,11 @@ const AdminPropertiesIndexRoute = AdminPropertiesIndexRouteImport.update({
   path: '/properties/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminGuideArticlesIndexRoute = AdminGuideArticlesIndexRouteImport.update({
+  id: '/guide-articles/',
+  path: '/guide-articles/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPropertiesNewRoute = AdminPropertiesNewRouteImport.update({
   id: '/properties/new',
   path: '/properties/new',
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/admin/properties/$id': typeof AdminPropertiesIdRoute
   '/admin/properties/new': typeof AdminPropertiesNewRoute
+  '/admin/guide-articles/': typeof AdminGuideArticlesIndexRoute
   '/admin/properties/': typeof AdminPropertiesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/admin/properties/$id': typeof AdminPropertiesIdRoute
   '/admin/properties/new': typeof AdminPropertiesNewRoute
+  '/admin/guide-articles': typeof AdminGuideArticlesIndexRoute
   '/admin/properties': typeof AdminPropertiesIndexRoute
 }
 export interface FileRoutesById {
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/admin/properties/$id': typeof AdminPropertiesIdRoute
   '/admin/properties/new': typeof AdminPropertiesNewRoute
+  '/admin/guide-articles/': typeof AdminGuideArticlesIndexRoute
   '/admin/properties/': typeof AdminPropertiesIndexRoute
 }
 export interface FileRouteTypes {
@@ -139,6 +148,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/admin/properties/$id'
     | '/admin/properties/new'
+    | '/admin/guide-articles/'
     | '/admin/properties/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -152,6 +162,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/properties/$id'
     | '/admin/properties/new'
+    | '/admin/guide-articles'
     | '/admin/properties'
   id:
     | '__root__'
@@ -166,6 +177,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/admin/properties/$id'
     | '/admin/properties/new'
+    | '/admin/guide-articles/'
     | '/admin/properties/'
   fileRoutesById: FileRoutesById
 }
@@ -252,6 +264,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPropertiesIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/guide-articles/': {
+      id: '/admin/guide-articles/'
+      path: '/guide-articles'
+      fullPath: '/admin/guide-articles/'
+      preLoaderRoute: typeof AdminGuideArticlesIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/properties/new': {
       id: '/admin/properties/new'
       path: '/properties/new'
@@ -273,6 +292,7 @@ interface AdminRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
   AdminPropertiesIdRoute: typeof AdminPropertiesIdRoute
   AdminPropertiesNewRoute: typeof AdminPropertiesNewRoute
+  AdminGuideArticlesIndexRoute: typeof AdminGuideArticlesIndexRoute
   AdminPropertiesIndexRoute: typeof AdminPropertiesIndexRoute
 }
 
@@ -280,6 +300,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
   AdminPropertiesIdRoute: AdminPropertiesIdRoute,
   AdminPropertiesNewRoute: AdminPropertiesNewRoute,
+  AdminGuideArticlesIndexRoute: AdminGuideArticlesIndexRoute,
   AdminPropertiesIndexRoute: AdminPropertiesIndexRoute,
 }
 
