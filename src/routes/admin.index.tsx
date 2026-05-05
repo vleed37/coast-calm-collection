@@ -1,37 +1,82 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { AdminPageHeader } from "@/components/admin/AdminShell";
+import { Building2, BookOpen, Mail, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/admin/")({
-  component: AdminHome,
+  component: Dashboard,
 });
 
-function AdminHome() {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState<string | null>(null);
+function Dashboard() {
+  const [stats, setStats] = useState({
+    propsTotal: 0,
+    propsPub: 0,
+    articles: 0,
+    newEnquiries: 0,
+  });
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? null));
+    (async () => {
+      const [props, propsPub, articles, enq] = await Promise.all([
+        supabase.from("properties").select("id", { count: "exact", head: true }),
+        supabase.from("properties").select("id", { count: "exact", head: true }).eq("is_published", true),
+        supabase.from("guide_articles").select("id", { count: "exact", head: true }),
+        supabase.from("enquiries").select("id", { count: "exact", head: true }).eq("status", "new"),
+      ]);
+      setStats({
+        propsTotal: props.count ?? 0,
+        propsPub: propsPub.count ?? 0,
+        articles: articles.count ?? 0,
+        newEnquiries: enq.count ?? 0,
+      });
+    })();
   }, []);
 
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    navigate({ to: "/admin/login" });
-  };
+  const cards = [
+    {
+      to: "/admin/properties",
+      icon: Building2,
+      label: "Properties",
+      value: `${stats.propsPub} / ${stats.propsTotal}`,
+      sub: "published / total",
+    },
+    {
+      to: "/admin/guide-articles",
+      icon: BookOpen,
+      label: "Guide Articles",
+      value: String(stats.articles),
+      sub: "total",
+    },
+    {
+      to: "/admin/enquiries",
+      icon: Mail,
+      label: "New Enquiries",
+      value: String(stats.newEnquiries),
+      sub: "awaiting reply",
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-cream px-6 md:px-12 py-24">
-      <div className="max-w-3xl mx-auto">
-        <span className="smallcaps text-warmth">Admin</span>
-        <h1 className="font-display text-5xl md:text-7xl font-light mt-4 leading-[0.95]">Welcome.</h1>
-        {email && <p className="mt-6 text-ink/70">Signed in as {email}</p>}
-        <button
-          onClick={signOut}
-          className="mt-12 bg-ocean text-cream px-8 py-3 uppercase tracking-[0.2em] text-xs hover:bg-ink transition-colors"
-        >
-          Sign out
-        </button>
+    <>
+      <AdminPageHeader title="Welcome." description="A quick view of what's happening." />
+      <div className="grid md:grid-cols-3 gap-6">
+        {cards.map((c) => (
+          <Link
+            key={c.to}
+            to={c.to}
+            className="group bg-white border border-mist p-6 rounded hover:border-ocean transition-colors"
+          >
+            <div className="flex items-start justify-between">
+              <c.icon className="w-5 h-5 text-warmth" />
+              <ArrowRight className="w-4 h-4 text-ink/30 group-hover:text-ocean transition-colors" />
+            </div>
+            <p className="smallcaps text-ink/60 mt-6">{c.label}</p>
+            <p className="font-display text-5xl font-light mt-2">{c.value}</p>
+            <p className="text-xs text-ink/50 mt-1">{c.sub}</p>
+          </Link>
+        ))}
       </div>
-    </div>
+    </>
   );
 }
