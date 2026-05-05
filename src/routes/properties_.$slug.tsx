@@ -161,7 +161,12 @@ function PropertyPage() {
       <section className="relative h-[90vh] w-full overflow-hidden">
         <img
           src={property.heroImage}
-          alt={property.name}
+          alt={`${property.name} — luxury self-catering villa in ${property.location}, South African West Coast`}
+          width={2400}
+          height={1600}
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-b from-transparent to-ink/30" />

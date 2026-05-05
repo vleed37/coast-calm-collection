@@ -30,8 +30,13 @@ function Home() {
       {/* HERO */}
       <section className="relative h-screen w-full overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=2400&q=80"
-          alt=""
+          src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=2400&q=80&fm=webp"
+          alt="Modern coastal villa exterior at golden hour, infinity pool overlooking the Atlantic on South Africa's West Coast"
+          width={2400}
+          height={1600}
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-ink/20 via-transparent to-ink/60" />
