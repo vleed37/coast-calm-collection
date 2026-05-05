@@ -1,13 +1,15 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, ErrorComponent } from "@tanstack/react-router";
 import { buildHead, organizationGraph } from "@/lib/seo";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { PropertyCard } from "@/components/site/PropertyCard";
 import { Reveal } from "@/components/site/Reveal";
 import { EnquirySheet } from "@/components/site/EnquirySheet";
-import { properties } from "@/data/properties";
+import { fetchPublishedProperties } from "@/lib/queries/properties";
 
 export const Route = createFileRoute("/")({
+  loader: () => fetchPublishedProperties(),
+  errorComponent: ({ error }) => <ErrorComponent error={error} />,
   head: () =>
     buildHead({
       title: "Luxury West Coast Villa Rentals | [BRAND]",
@@ -23,6 +25,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const properties = Route.useLoaderData();
   return (
     <div className="page-fade bg-cream">
       <Nav transparentOverHero />
