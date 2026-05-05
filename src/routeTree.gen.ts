@@ -18,6 +18,13 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as PropertiesSlugRouteImport } from './routes/properties_.$slug'
 import { Route as AdminLoginRouteImport } from './routes/admin_.login'
+import { Route as AdminEnquiriesRouteImport } from './routes/admin.enquiries'
+import { Route as AdminPropertiesIndexRouteImport } from './routes/admin.properties.index'
+import { Route as AdminGuideArticlesIndexRouteImport } from './routes/admin.guide-articles.index'
+import { Route as AdminPropertiesNewRouteImport } from './routes/admin.properties.new'
+import { Route as AdminPropertiesIdRouteImport } from './routes/admin.properties.$id'
+import { Route as AdminGuideArticlesNewRouteImport } from './routes/admin.guide-articles.new'
+import { Route as AdminGuideArticlesIdRouteImport } from './routes/admin.guide-articles.$id'
 
 const PropertiesRoute = PropertiesRouteImport.update({
   id: '/properties',
@@ -64,6 +71,41 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminEnquiriesRoute = AdminEnquiriesRouteImport.update({
+  id: '/enquiries',
+  path: '/enquiries',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPropertiesIndexRoute = AdminPropertiesIndexRouteImport.update({
+  id: '/properties/',
+  path: '/properties/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminGuideArticlesIndexRoute = AdminGuideArticlesIndexRouteImport.update({
+  id: '/guide-articles/',
+  path: '/guide-articles/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPropertiesNewRoute = AdminPropertiesNewRouteImport.update({
+  id: '/properties/new',
+  path: '/properties/new',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPropertiesIdRoute = AdminPropertiesIdRouteImport.update({
+  id: '/properties/$id',
+  path: '/properties/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminGuideArticlesNewRoute = AdminGuideArticlesNewRouteImport.update({
+  id: '/guide-articles/new',
+  path: '/guide-articles/new',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminGuideArticlesIdRoute = AdminGuideArticlesIdRouteImport.update({
+  id: '/guide-articles/$id',
+  path: '/guide-articles/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -72,9 +114,16 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/guide': typeof GuideRoute
   '/properties': typeof PropertiesRoute
+  '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/login': typeof AdminLoginRoute
   '/properties/$slug': typeof PropertiesSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/guide-articles/$id': typeof AdminGuideArticlesIdRoute
+  '/admin/guide-articles/new': typeof AdminGuideArticlesNewRoute
+  '/admin/properties/$id': typeof AdminPropertiesIdRoute
+  '/admin/properties/new': typeof AdminPropertiesNewRoute
+  '/admin/guide-articles/': typeof AdminGuideArticlesIndexRoute
+  '/admin/properties/': typeof AdminPropertiesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -82,9 +131,16 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/guide': typeof GuideRoute
   '/properties': typeof PropertiesRoute
+  '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/login': typeof AdminLoginRoute
   '/properties/$slug': typeof PropertiesSlugRoute
   '/admin': typeof AdminIndexRoute
+  '/admin/guide-articles/$id': typeof AdminGuideArticlesIdRoute
+  '/admin/guide-articles/new': typeof AdminGuideArticlesNewRoute
+  '/admin/properties/$id': typeof AdminPropertiesIdRoute
+  '/admin/properties/new': typeof AdminPropertiesNewRoute
+  '/admin/guide-articles': typeof AdminGuideArticlesIndexRoute
+  '/admin/properties': typeof AdminPropertiesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -94,9 +150,16 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/guide': typeof GuideRoute
   '/properties': typeof PropertiesRoute
+  '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin_/login': typeof AdminLoginRoute
   '/properties_/$slug': typeof PropertiesSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/guide-articles/$id': typeof AdminGuideArticlesIdRoute
+  '/admin/guide-articles/new': typeof AdminGuideArticlesNewRoute
+  '/admin/properties/$id': typeof AdminPropertiesIdRoute
+  '/admin/properties/new': typeof AdminPropertiesNewRoute
+  '/admin/guide-articles/': typeof AdminGuideArticlesIndexRoute
+  '/admin/properties/': typeof AdminPropertiesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -107,9 +170,16 @@ export interface FileRouteTypes {
     | '/contact'
     | '/guide'
     | '/properties'
+    | '/admin/enquiries'
     | '/admin/login'
     | '/properties/$slug'
     | '/admin/'
+    | '/admin/guide-articles/$id'
+    | '/admin/guide-articles/new'
+    | '/admin/properties/$id'
+    | '/admin/properties/new'
+    | '/admin/guide-articles/'
+    | '/admin/properties/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -117,9 +187,16 @@ export interface FileRouteTypes {
     | '/contact'
     | '/guide'
     | '/properties'
+    | '/admin/enquiries'
     | '/admin/login'
     | '/properties/$slug'
     | '/admin'
+    | '/admin/guide-articles/$id'
+    | '/admin/guide-articles/new'
+    | '/admin/properties/$id'
+    | '/admin/properties/new'
+    | '/admin/guide-articles'
+    | '/admin/properties'
   id:
     | '__root__'
     | '/'
@@ -128,9 +205,16 @@ export interface FileRouteTypes {
     | '/contact'
     | '/guide'
     | '/properties'
+    | '/admin/enquiries'
     | '/admin_/login'
     | '/properties_/$slug'
     | '/admin/'
+    | '/admin/guide-articles/$id'
+    | '/admin/guide-articles/new'
+    | '/admin/properties/$id'
+    | '/admin/properties/new'
+    | '/admin/guide-articles/'
+    | '/admin/properties/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -209,15 +293,78 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/enquiries': {
+      id: '/admin/enquiries'
+      path: '/enquiries'
+      fullPath: '/admin/enquiries'
+      preLoaderRoute: typeof AdminEnquiriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/properties/': {
+      id: '/admin/properties/'
+      path: '/properties'
+      fullPath: '/admin/properties/'
+      preLoaderRoute: typeof AdminPropertiesIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/guide-articles/': {
+      id: '/admin/guide-articles/'
+      path: '/guide-articles'
+      fullPath: '/admin/guide-articles/'
+      preLoaderRoute: typeof AdminGuideArticlesIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/properties/new': {
+      id: '/admin/properties/new'
+      path: '/properties/new'
+      fullPath: '/admin/properties/new'
+      preLoaderRoute: typeof AdminPropertiesNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/properties/$id': {
+      id: '/admin/properties/$id'
+      path: '/properties/$id'
+      fullPath: '/admin/properties/$id'
+      preLoaderRoute: typeof AdminPropertiesIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/guide-articles/new': {
+      id: '/admin/guide-articles/new'
+      path: '/guide-articles/new'
+      fullPath: '/admin/guide-articles/new'
+      preLoaderRoute: typeof AdminGuideArticlesNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/guide-articles/$id': {
+      id: '/admin/guide-articles/$id'
+      path: '/guide-articles/$id'
+      fullPath: '/admin/guide-articles/$id'
+      preLoaderRoute: typeof AdminGuideArticlesIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
+  AdminEnquiriesRoute: typeof AdminEnquiriesRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminGuideArticlesIdRoute: typeof AdminGuideArticlesIdRoute
+  AdminGuideArticlesNewRoute: typeof AdminGuideArticlesNewRoute
+  AdminPropertiesIdRoute: typeof AdminPropertiesIdRoute
+  AdminPropertiesNewRoute: typeof AdminPropertiesNewRoute
+  AdminGuideArticlesIndexRoute: typeof AdminGuideArticlesIndexRoute
+  AdminPropertiesIndexRoute: typeof AdminPropertiesIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminEnquiriesRoute: AdminEnquiriesRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminGuideArticlesIdRoute: AdminGuideArticlesIdRoute,
+  AdminGuideArticlesNewRoute: AdminGuideArticlesNewRoute,
+  AdminPropertiesIdRoute: AdminPropertiesIdRoute,
+  AdminPropertiesNewRoute: AdminPropertiesNewRoute,
+  AdminGuideArticlesIndexRoute: AdminGuideArticlesIndexRoute,
+  AdminPropertiesIndexRoute: AdminPropertiesIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
@@ -235,3 +382,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
