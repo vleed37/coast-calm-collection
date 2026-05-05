@@ -1,4 +1,4 @@
-import type { Property } from "@/data/properties";
+import type { Property } from "@/lib/queries/properties";
 
 // TODO: replace at deploy with the live custom domain
 export const SITE_URL = "https://placeholder-domain.com";
