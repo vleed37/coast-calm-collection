@@ -10,12 +10,30 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PropertiesRouteImport } from './routes/properties'
+import { Route as GuideRouteImport } from './routes/guide'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as BookingPolicyRouteImport } from './routes/booking-policy'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PropertiesSlugRouteImport } from './routes/properties.$slug'
 
 const PropertiesRoute = PropertiesRouteImport.update({
   id: '/properties',
   path: '/properties',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuideRoute = GuideRouteImport.update({
+  id: '/guide',
+  path: '/guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookingPolicyRoute = BookingPolicyRouteImport.update({
+  id: '/booking-policy',
+  path: '/booking-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -31,30 +49,61 @@ const PropertiesSlugRoute = PropertiesSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/booking-policy': typeof BookingPolicyRoute
+  '/contact': typeof ContactRoute
+  '/guide': typeof GuideRoute
   '/properties': typeof PropertiesRouteWithChildren
   '/properties/$slug': typeof PropertiesSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/booking-policy': typeof BookingPolicyRoute
+  '/contact': typeof ContactRoute
+  '/guide': typeof GuideRoute
   '/properties': typeof PropertiesRouteWithChildren
   '/properties/$slug': typeof PropertiesSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/booking-policy': typeof BookingPolicyRoute
+  '/contact': typeof ContactRoute
+  '/guide': typeof GuideRoute
   '/properties': typeof PropertiesRouteWithChildren
   '/properties/$slug': typeof PropertiesSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/properties' | '/properties/$slug'
+  fullPaths:
+    | '/'
+    | '/booking-policy'
+    | '/contact'
+    | '/guide'
+    | '/properties'
+    | '/properties/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/properties' | '/properties/$slug'
-  id: '__root__' | '/' | '/properties' | '/properties/$slug'
+  to:
+    | '/'
+    | '/booking-policy'
+    | '/contact'
+    | '/guide'
+    | '/properties'
+    | '/properties/$slug'
+  id:
+    | '__root__'
+    | '/'
+    | '/booking-policy'
+    | '/contact'
+    | '/guide'
+    | '/properties'
+    | '/properties/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BookingPolicyRoute: typeof BookingPolicyRoute
+  ContactRoute: typeof ContactRoute
+  GuideRoute: typeof GuideRoute
   PropertiesRoute: typeof PropertiesRouteWithChildren
 }
 
@@ -65,6 +114,27 @@ declare module '@tanstack/react-router' {
       path: '/properties'
       fullPath: '/properties'
       preLoaderRoute: typeof PropertiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guide': {
+      id: '/guide'
+      path: '/guide'
+      fullPath: '/guide'
+      preLoaderRoute: typeof GuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/booking-policy': {
+      id: '/booking-policy'
+      path: '/booking-policy'
+      fullPath: '/booking-policy'
+      preLoaderRoute: typeof BookingPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -98,6 +168,9 @@ const PropertiesRouteWithChildren = PropertiesRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BookingPolicyRoute: BookingPolicyRoute,
+  ContactRoute: ContactRoute,
+  GuideRoute: GuideRoute,
   PropertiesRoute: PropertiesRouteWithChildren,
 }
 export const routeTree = rootRouteImport
