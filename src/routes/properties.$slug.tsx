@@ -82,7 +82,7 @@ function PropertyPage() {
           <Reveal>
             <span className="smallcaps text-warmth mb-10 block">Gallery</span>
             <div className="columns-1 md:columns-2 lg:columns-3 gap-4 md:gap-6 [column-fill:_balance]">
-              {property.gallery.map((src, i) => (
+              {property.gallery.map((src: string, i: number) => (
                 <Lightbox
                   key={i}
                   images={property.gallery}
@@ -119,7 +119,7 @@ function PropertyPage() {
           <span className="smallcaps text-warmth">The House Holds</span>
           <h2 className="font-display text-4xl md:text-5xl mt-4 font-light">Features</h2>
           <ul className="grid sm:grid-cols-2 gap-x-12 gap-y-4 mt-12">
-            {property.features.map((f) => (
+            {property.features.map((f: string) => (
               <li key={f} className="flex items-start gap-4 py-3 border-b border-mist text-ink/85">
                 <span className="text-warmth font-light text-xl leading-none mt-1">+</span>
                 <span>{f}</span>
