@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 import { Button } from "@/components/ui/button";
@@ -71,9 +71,8 @@ function Enquiries() {
             </thead>
             <tbody>
               {rows.map((r) => (
-                <>
+                <React.Fragment key={r.id}>
                   <tr
-                    key={r.id}
                     className="border-t border-mist hover:bg-cream/50 cursor-pointer"
                     onClick={() => setOpen((o) => ({ ...o, [r.id]: !o[r.id] }))}
                   >
@@ -92,7 +91,7 @@ function Enquiries() {
                     </td>
                   </tr>
                   {open[r.id] && (
-                    <tr key={r.id + "-d"} className="bg-cream/30 border-t border-mist">
+                    <tr className="bg-cream/30 border-t border-mist">
                       <td></td>
                       <td colSpan={5} className="px-4 py-4 text-sm space-y-2">
                         <div className="grid grid-cols-3 gap-4">
@@ -107,7 +106,7 @@ function Enquiries() {
                       </td>
                     </tr>
                   )}
-                </>
+                </React.Fragment>
               ))}
               {rows.length === 0 && <tr><td colSpan={6} className="px-4 py-12 text-center text-ink/50">No enquiries yet.</td></tr>}
             </tbody>
