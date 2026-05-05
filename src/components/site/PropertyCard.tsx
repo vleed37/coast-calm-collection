@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import type { Property } from "@/data/properties";
+import type { Property } from "@/lib/queries/properties";
 
 export function PropertyCard({ property, offset = false }: { property: Property; offset?: boolean }) {
   return (

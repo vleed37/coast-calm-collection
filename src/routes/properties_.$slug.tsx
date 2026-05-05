@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, ErrorComponent } from "@tanstack/react-router";
 import { buildHead, lodgingGraph, breadcrumbGraph, truncateDescription } from "@/lib/seo";
 import { useEffect, useState } from "react";
 import { Nav } from "@/components/site/Nav";
@@ -7,117 +7,35 @@ import { Reveal } from "@/components/site/Reveal";
 import { PropertyCard } from "@/components/site/PropertyCard";
 import { EnquirySheet } from "@/components/site/EnquirySheet";
 import { Lightbox } from "@/components/site/Lightbox";
-import { findProperty, properties } from "@/data/properties";
+import { fetchPropertyBySlug, fetchPublishedProperties, type Property } from "@/lib/queries/properties";
 
-type Vignette = { title: string; body: string };
-type Extras = {
-  bandQuote: string;
-  setting: { heading: string; paragraphs: string[] };
-  experience: Vignette[];
-  pin: { x: number; y: number; label: string };
-};
-
-const EXTRAS: Record<string, Extras> = {
-  "driftwood-house": {
-    bandQuote:
-      "There is a long table. It has seen four hundred dinners. It is ready for yours.",
-    setting: {
-      heading: "Where you'll be.",
-      paragraphs: [
-        "Shelley Point is a quiet residential estate twenty minutes from St Helena Bay. Low walls, slow roads, the kind of street where the gardener waves first.",
-        "The beach is a four-minute walk from the front door. Most mornings you'll have it to yourself before nine. There is a tidal pool at the south end and a coffee cart that opens when it feels like it.",
-        "Cape Town is two hours back down the R27. Most guests do the drive once and then stay put.",
-      ],
-    },
-    experience: [
-      {
-        title: "Mornings",
-        body: "The east-facing bedrooms catch the first light at six-thirty. Coffee on the deck. The garden's still cold; the railing has salt on it.",
-      },
-      {
-        title: "Long lunches",
-        body: "The oak table seats fourteen without anyone reaching. Cold langoustine, a glass of Chenin from Darling, a third hour you didn't plan for.",
-      },
-      {
-        title: "Last light",
-        body: "The fireplace takes a full arm of wood. Someone always finds a record. The bath fills slowly and the windows go violet.",
-      },
-    ],
-    pin: { x: 110, y: 150, label: "Shelley Point" },
-  },
-  "salt-pavilion": {
-    bandQuote:
-      "The pavilion turns the colour of the sand at four. By five, you've stopped noticing the time.",
-    setting: {
-      heading: "Where you'll be.",
-      paragraphs: [
-        "Britannia Bay is a thin curl of houses above a long, white beach. There is no shop, no traffic light, and only one road in.",
-        "The deck steps down to the sand in twelve paces. The bay is shallow for a hundred metres; the water warms by noon. Walk south for an hour and you'll meet no one.",
-        "Paternoster, with its restaurants and its harbour, is fifteen minutes by car. We recommend leaving it for one evening.",
-      ],
-    },
-    experience: [
-      {
-        title: "Mornings",
-        body: "The bay is glass at seven. Bicycles by the door. A long ride down the beach road, breakfast back at the house.",
-      },
-      {
-        title: "Afternoons",
-        body: "The shallow pool warms by noon. The one armchair by the window is fought for politely, then settled.",
-      },
-      {
-        title: "Evenings",
-        body: "The west-facing glass takes the sun straight on. Outdoor fire, a bottle of red, the record player still working after eleven years.",
-      },
-    ],
-    pin: { x: 95, y: 175, label: "Britannia Bay" },
-  },
-  "cape-aerie": {
-    bandQuote:
-      "The bay arrives in the room before you do. Stay still. Let it.",
-    setting: {
-      heading: "Where you'll be.",
-      paragraphs: [
-        "St Helena Bay is a working bay — fishing boats out at four, in by ten. The house sits a hundred metres above all of it, on a rock that took two years to build on.",
-        "There is a private path to a small cove below. It takes eleven minutes down, twenty back up. Most guests do it once a day.",
-        "The town itself is small and unromantic in the right way: a co-op, a butcher, a bakery that sells out by ten.",
-      ],
-    },
-    experience: [
-      {
-        title: "Mornings",
-        body: "The boats leave the harbour in the dark. By the time you have coffee, they're a line of lights moving north.",
-      },
-      {
-        title: "Middays",
-        body: "The copper bath beside the window. The telescope on the deck. Lunch is whatever the bakery had left.",
-      },
-      {
-        title: "Last light",
-        body: "The cliff-top firepit. Two fireplaces inside if the wind picks up. The bay goes black in fifteen minutes flat.",
-      },
-    ],
-    pin: { x: 120, y: 130, label: "St Helena Bay" },
-  },
+const PROPERTY_PINS: Record<string, { x: number; y: number; label: string }> = {
+  "driftwood-house": { x: 110, y: 150, label: "Shelley Point" },
+  "salt-pavilion": { x: 95, y: 175, label: "Britannia Bay" },
+  "cape-aerie": { x: 120, y: 130, label: "St Helena Bay" },
 };
 
 export const Route = createFileRoute("/properties_/$slug")({
-  loader: ({ params }) => {
-    const property = findProperty(params.slug);
+  loader: async ({ params }) => {
+    const [property, all] = await Promise.all([
+      fetchPropertyBySlug(params.slug),
+      fetchPublishedProperties(),
+    ]);
     if (!property) throw notFound();
-    return { property };
+    const others = all.filter((p) => p.id !== property.id).slice(0, 2);
+    return { property, others };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return {};
     const p = loaderData.property;
     const longText = [p.description, ...p.story].join(" ");
     return buildHead({
-      title: `${p.name} — Luxury Villa in ${p.location} | [BRAND]`,
-      description: truncateDescription(longText, 155),
+      title: p.seoTitle || `${p.name} — Luxury Villa in ${p.location} | [BRAND]`,
+      description: p.seoDescription || truncateDescription(longText, 155),
       path: `/properties/${p.id}`,
-      image: p.heroImage,
+      image: p.seoOgImage || p.heroImage,
       type: "product",
-      keywords: `${p.location} villa, ${p.location} self catering, ${p.beds} bedroom holiday home, ${p.location} accommodation, west coast luxury rental`,
+      keywords: p.seoKeywords || `${p.location} villa, ${p.location} self catering, ${p.beds} bedroom holiday home, ${p.location} accommodation, west coast luxury rental`,
       structuredData: [
         lodgingGraph(p),
         breadcrumbGraph([
@@ -133,18 +51,17 @@ export const Route = createFileRoute("/properties_/$slug")({
       <p className="font-display italic text-3xl">House not found.</p>
     </div>
   ),
-  errorComponent: ({ error }) => (
-    <div className="min-h-screen flex items-center justify-center px-6 text-center">
-      <p className="font-display italic text-2xl text-ocean">{error.message}</p>
-    </div>
-  ),
+  errorComponent: ({ error }) => <ErrorComponent error={error} />,
   component: PropertyPage,
 });
 
 function PropertyPage() {
-  const { property } = Route.useLoaderData();
-  const others = properties.filter((p) => p.id !== property.id).slice(0, 2);
-  const extras = EXTRAS[property.id];
+  const { property, others } = Route.useLoaderData() as { property: Property; others: Property[] };
+  const settingParagraphs = property.settingCopy
+    .split(/\n\n+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const pin = PROPERTY_PINS[property.id] ?? { x: 110, y: 150, label: property.location };
   const [showCta, setShowCta] = useState(false);
   useEffect(() => {
     const onScroll = () => setShowCta(window.scrollY > window.innerHeight);
@@ -250,7 +167,7 @@ function PropertyPage() {
       <section className="py-32 md:py-40 px-6 bg-mist/40">
         <Reveal>
           <p className="font-display italic text-4xl md:text-5xl text-ink text-center max-w-3xl mx-auto leading-[1.3]">
-            "{extras.bandQuote}"
+            "{property.pullQuote}"
           </p>
         </Reveal>
       </section>
@@ -259,7 +176,7 @@ function PropertyPage() {
       <section className="grid md:grid-cols-2">
         <div className="relative aspect-[4/5] md:aspect-auto bg-mist overflow-hidden">
           <img
-            src={property.gallery[2]}
+            src={property.settingImage || property.gallery[2]}
             alt=""
             loading="lazy"
             className="absolute inset-0 w-full h-full object-cover"
@@ -269,10 +186,10 @@ function PropertyPage() {
           <Reveal>
             <span className="smallcaps text-warmth">The Setting</span>
             <h2 className="font-display text-4xl md:text-5xl font-light mt-5 leading-[1.05]">
-              {extras.setting.heading}
+              Where you'll be.
             </h2>
             <div className="mt-8 space-y-5 text-ink/80 leading-[1.8]">
-              {extras.setting.paragraphs.map((p, i) => (
+              {settingParagraphs.map((p, i) => (
                 <p key={i}>{p}</p>
               ))}
             </div>
@@ -288,7 +205,7 @@ function PropertyPage() {
         <Reveal>
           <span className="smallcaps text-warmth">The Experience</span>
           <div className="mt-16 flex flex-col">
-            {extras.experience.map((v, i) => (
+            {property.experienceVignettes.map((v, i) => (
               <div key={v.title} className={`py-8 ${i > 0 ? "border-t border-mist" : ""}`}>
                 <h3 className="font-display text-3xl md:text-4xl font-light">{v.title}</h3>
                 <p className="mt-4 text-ink/80 max-w-xl mx-auto leading-[1.8]">{v.body}</p>
@@ -355,7 +272,7 @@ function PropertyPage() {
           <Reveal>
             <span className="smallcaps text-warmth">On the Map</span>
             <div className="mt-12 bg-cream">
-              <CoastMap pin={extras.pin} />
+              <CoastMap pin={pin} />
             </div>
           </Reveal>
         </div>
