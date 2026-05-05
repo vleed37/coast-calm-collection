@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
-import { properties } from "@/data/properties";
+import { EnquiryForm } from "@/components/site/EnquiryForm";
 import { useState } from "react";
 
 export const Route = createFileRoute("/contact")({
@@ -35,43 +35,14 @@ function ContactPage() {
             {sent ? (
               <p className="mt-12 font-display italic text-3xl text-ocean">Thank you. We'll be in touch.</p>
             ) : (
-              <form className="mt-12 space-y-6" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
-                <Field label="Name" name="name" />
-                <Field label="Email" name="email" type="email" />
-                <Field label="Phone" name="phone" type="tel" />
-                <div className="flex flex-col gap-2">
-                  <label className="smallcaps text-ink/60">Property of interest</label>
-                  <select className="bg-transparent border-b border-mist py-2 focus:outline-none focus:border-ocean">
-                    {properties.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-                    <option value="">I'm not sure yet</option>
-                  </select>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <Field label="Check-in" name="checkin" type="date" />
-                  <Field label="Check-out" name="checkout" type="date" />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="smallcaps text-ink/60">Message</label>
-                  <textarea rows={4} className="bg-transparent border-b border-mist py-2 focus:outline-none focus:border-ocean resize-none" />
-                </div>
-                <button type="submit" className="w-full bg-ocean text-cream py-4 smallcaps hover:bg-ink transition-colors">
-                  Send enquiry
-                </button>
-              </form>
+              <div className="mt-12">
+                <EnquiryForm onSubmitted={() => setSent(true)} />
+              </div>
             )}
           </div>
         </div>
       </section>
       <Footer />
-    </div>
-  );
-}
-
-function Field({ label, name, type = "text" }: { label: string; name: string; type?: string }) {
-  return (
-    <div className="flex flex-col gap-2">
-      <label className="smallcaps text-ink/60">{label}</label>
-      <input type={type} name={name} className="bg-transparent border-b border-mist py-2 focus:outline-none focus:border-ocean" />
     </div>
   );
 }
