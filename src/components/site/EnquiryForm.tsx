@@ -1,10 +1,12 @@
-import { useState, ReactNode } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { properties } from "@/data/properties";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { z } from "zod";
 
 function FieldLabel({ children }: { children: ReactNode }) {
   return (
@@ -48,12 +50,72 @@ export function EnquiryForm({
 }) {
   const [checkin, setCheckin] = useState<Date | undefined>();
   const [checkout, setCheckout] = useState<Date | undefined>();
+  const [submitting, setSubmitting] = useState(false);
+  const [propertyOptions, setPropertyOptions] = useState<{ id: string; name: string }[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    supabase
+      .from("properties")
+      .select("slug, name")
+      .eq("is_published", true)
+      .order("sort_order", { ascending: true })
+      .then(({ data }) => {
+        if (!cancelled && data) {
+          setPropertyOptions(data.map((p) => ({ id: p.slug, name: p.name })));
+        }
+      });
+    return () => { cancelled = true; };
+  }, []);
 
   return (
     <form
       className="space-y-8"
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault();
+        if (submitting) return;
+        const fd = new FormData(e.currentTarget);
+        const payload = {
+          name: String(fd.get("name") || "").trim(),
+          email: String(fd.get("email") || "").trim(),
+          phone: String(fd.get("phone") || "").trim() || null,
+          property_of_interest: String(fd.get("property") || "") || null,
+          check_in: checkin ? format(checkin, "yyyy-MM-dd") : null,
+          check_out: checkout ? format(checkout, "yyyy-MM-dd") : null,
+          message: String(fd.get("message") || "").trim() || null,
+        };
+        const schema = z.object({
+          name: z.string().min(1, "Please add your name").max(200),
+          email: z.string().email("Please use a valid email").max(320),
+          phone: z.string().max(50).nullable(),
+          property_of_interest: z.string().nullable(),
+          check_in: z.string().nullable(),
+          check_out: z.string().nullable(),
+          message: z.string().max(5000).nullable(),
+        });
+        const parsed = schema.safeParse(payload);
+        if (!parsed.success) {
+          toast.error(parsed.error.issues[0]?.message ?? "Please check the form and try again.");
+          return;
+        }
+        setSubmitting(true);
+        const { data: row, error } = await supabase
+          .from("enquiries")
+          .insert(parsed.data)
+          .select()
+          .single();
+        if (error) {
+          setSubmitting(false);
+          toast.error("Couldn't send right now. Please try again.");
+          return;
+        }
+        // Fire-and-forget notification
+        supabase.functions.invoke("notify-enquiry", { body: row }).catch(() => {});
+        toast.success("Enquiry sent — we'll reply within a day.");
+        setSubmitting(false);
+        (e.target as HTMLFormElement).reset();
+        setCheckin(undefined);
+        setCheckout(undefined);
         onSubmitted?.();
       }}
     >
@@ -73,7 +135,7 @@ export function EnquiryForm({
         <FieldLabel>Property of interest</FieldLabel>
         <select name="property" defaultValue={defaultProperty ?? ""} className={inputCls}>
           <option value="">I'm not sure yet</option>
-          {properties.map((p) => (
+          {propertyOptions.map((p) => (
             <option key={p.id} value={p.id}>
               {p.name}
             </option>
@@ -92,13 +154,14 @@ export function EnquiryForm({
       </div>
       <div>
         <FieldLabel>Message</FieldLabel>
-        <textarea rows={4} className={cn(inputCls, "resize-none")} />
+        <textarea name="message" rows={4} className={cn(inputCls, "resize-none")} />
       </div>
       <button
         type="submit"
-        className="w-full bg-ocean text-cream py-5 uppercase tracking-[0.2em] text-sm hover:bg-ink transition-colors duration-300"
+        disabled={submitting}
+        className="w-full bg-ocean text-cream py-5 uppercase tracking-[0.2em] text-sm hover:bg-ink transition-colors duration-300 disabled:opacity-60"
       >
-        Send enquiry
+        {submitting ? "Sending…" : "Send enquiry"}
       </button>
     </form>
   );
