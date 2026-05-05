@@ -1,0 +1,9 @@
+// Backup of original hardcoded guide articles (now served from Supabase guide_articles table)
+export const articles = [
+  { cat: "Eat", title: "The bakery that opens at six.", desc: "A small unmarked door behind the post office...", img: "https://images.unsplash.com/photo-1509440159596-0249088772ff" },
+  { cat: "Walk", title: "A walk between the lighthouses.", desc: "Three hours along the cliff path if you take it slow...", img: "https://images.unsplash.com/photo-1502082553048-f009c37129b9" },
+  { cat: "Eat", title: "Where to find the oysters.", desc: "A wooden shack at the back of the harbour...", img: "https://images.unsplash.com/photo-1642166805142-0426a75bf373" },
+  { cat: "Watch", title: "The pelicans at five o'clock.", desc: "They come in low across the bay...", img: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21" },
+  { cat: "Drink", title: "A small wine list, well chosen.", desc: "Eleven bottles, all from within an hour...", img: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3" },
+  { cat: "Wander", title: "The Saturday market at Paternoster.", desc: "Linen, fish, two kinds of honey...", img: "https://images.unsplash.com/photo-1488459716781-31db52582fe9" },
+];
