@@ -14,7 +14,180 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      enquiries: {
+        Row: {
+          check_in: string | null
+          check_out: string | null
+          created_at: string
+          email: string
+          id: string
+          message: string | null
+          name: string
+          phone: string | null
+          property_of_interest: string | null
+          status: string
+        }
+        Insert: {
+          check_in?: string | null
+          check_out?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          message?: string | null
+          name: string
+          phone?: string | null
+          property_of_interest?: string | null
+          status?: string
+        }
+        Update: {
+          check_in?: string | null
+          check_out?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string | null
+          name?: string
+          phone?: string | null
+          property_of_interest?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+      guide_articles: {
+        Row: {
+          body: string | null
+          category: string
+          created_at: string
+          description: string
+          id: string
+          image: string
+          is_published: boolean
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string | null
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          image: string
+          is_published?: boolean
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string | null
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          image?: string
+          is_published?: boolean
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      properties: {
+        Row: {
+          baths: number
+          beds: number
+          created_at: string
+          description: string
+          experience_vignettes: Json
+          features: string[]
+          from_price: string
+          gallery: string[]
+          guests: number
+          hero_image: string
+          id: string
+          is_published: boolean
+          location: string
+          long_copy: string[]
+          min_stay: string
+          name: string
+          pull_quote: string | null
+          seo_description: string | null
+          seo_keywords: string | null
+          seo_og_image: string | null
+          seo_title: string | null
+          setting_copy: string
+          setting_image: string | null
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          baths: number
+          beds: number
+          created_at?: string
+          description: string
+          experience_vignettes?: Json
+          features?: string[]
+          from_price: string
+          gallery?: string[]
+          guests: number
+          hero_image: string
+          id?: string
+          is_published?: boolean
+          location: string
+          long_copy?: string[]
+          min_stay: string
+          name: string
+          pull_quote?: string | null
+          seo_description?: string | null
+          seo_keywords?: string | null
+          seo_og_image?: string | null
+          seo_title?: string | null
+          setting_copy: string
+          setting_image?: string | null
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          baths?: number
+          beds?: number
+          created_at?: string
+          description?: string
+          experience_vignettes?: Json
+          features?: string[]
+          from_price?: string
+          gallery?: string[]
+          guests?: number
+          hero_image?: string
+          id?: string
+          is_published?: boolean
+          location?: string
+          long_copy?: string[]
+          min_stay?: string
+          name?: string
+          pull_quote?: string | null
+          seo_description?: string | null
+          seo_keywords?: string | null
+          seo_og_image?: string | null
+          seo_title?: string | null
+          setting_copy?: string
+          setting_image?: string | null
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
