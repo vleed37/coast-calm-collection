@@ -176,7 +176,7 @@ function PropertyPage() {
       <section className="grid md:grid-cols-2">
         <div className="relative aspect-[4/5] md:aspect-auto bg-mist overflow-hidden">
           <img
-            src={property.gallery[2]}
+            src={property.settingImage || property.gallery[2]}
             alt=""
             loading="lazy"
             className="absolute inset-0 w-full h-full object-cover"
