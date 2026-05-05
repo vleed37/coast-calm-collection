@@ -25,7 +25,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const properties = Route.useLoaderData();
+  const properties = Route.useLoaderData() as Awaited<ReturnType<typeof fetchPublishedProperties>>;
   return (
     <div className="page-fade bg-cream">
       <Nav transparentOverHero />
