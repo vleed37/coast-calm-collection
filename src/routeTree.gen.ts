@@ -18,6 +18,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as PropertiesSlugRouteImport } from './routes/properties_.$slug'
 import { Route as AdminLoginRouteImport } from './routes/admin_.login'
+import { Route as AdminEnquiriesRouteImport } from './routes/admin.enquiries'
 import { Route as AdminPropertiesIndexRouteImport } from './routes/admin.properties.index'
 import { Route as AdminGuideArticlesIndexRouteImport } from './routes/admin.guide-articles.index'
 import { Route as AdminPropertiesNewRouteImport } from './routes/admin.properties.new'
@@ -70,6 +71,11 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminEnquiriesRoute = AdminEnquiriesRouteImport.update({
+  id: '/enquiries',
+  path: '/enquiries',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPropertiesIndexRoute = AdminPropertiesIndexRouteImport.update({
   id: '/properties/',
   path: '/properties/',
@@ -108,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/guide': typeof GuideRoute
   '/properties': typeof PropertiesRoute
+  '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/login': typeof AdminLoginRoute
   '/properties/$slug': typeof PropertiesSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -124,6 +131,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/guide': typeof GuideRoute
   '/properties': typeof PropertiesRoute
+  '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin/login': typeof AdminLoginRoute
   '/properties/$slug': typeof PropertiesSlugRoute
   '/admin': typeof AdminIndexRoute
@@ -142,6 +150,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/guide': typeof GuideRoute
   '/properties': typeof PropertiesRoute
+  '/admin/enquiries': typeof AdminEnquiriesRoute
   '/admin_/login': typeof AdminLoginRoute
   '/properties_/$slug': typeof PropertiesSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -161,6 +170,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/guide'
     | '/properties'
+    | '/admin/enquiries'
     | '/admin/login'
     | '/properties/$slug'
     | '/admin/'
@@ -177,6 +187,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/guide'
     | '/properties'
+    | '/admin/enquiries'
     | '/admin/login'
     | '/properties/$slug'
     | '/admin'
@@ -194,6 +205,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/guide'
     | '/properties'
+    | '/admin/enquiries'
     | '/admin_/login'
     | '/properties_/$slug'
     | '/admin/'
@@ -281,6 +293,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/enquiries': {
+      id: '/admin/enquiries'
+      path: '/enquiries'
+      fullPath: '/admin/enquiries'
+      preLoaderRoute: typeof AdminEnquiriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/properties/': {
       id: '/admin/properties/'
       path: '/properties'
@@ -327,6 +346,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminEnquiriesRoute: typeof AdminEnquiriesRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminGuideArticlesIdRoute: typeof AdminGuideArticlesIdRoute
   AdminGuideArticlesNewRoute: typeof AdminGuideArticlesNewRoute
@@ -337,6 +357,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminEnquiriesRoute: AdminEnquiriesRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminGuideArticlesIdRoute: AdminGuideArticlesIdRoute,
   AdminGuideArticlesNewRoute: AdminGuideArticlesNewRoute,
