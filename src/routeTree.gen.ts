@@ -22,6 +22,8 @@ import { Route as AdminPropertiesIndexRouteImport } from './routes/admin.propert
 import { Route as AdminGuideArticlesIndexRouteImport } from './routes/admin.guide-articles.index'
 import { Route as AdminPropertiesNewRouteImport } from './routes/admin.properties.new'
 import { Route as AdminPropertiesIdRouteImport } from './routes/admin.properties.$id'
+import { Route as AdminGuideArticlesNewRouteImport } from './routes/admin.guide-articles.new'
+import { Route as AdminGuideArticlesIdRouteImport } from './routes/admin.guide-articles.$id'
 
 const PropertiesRoute = PropertiesRouteImport.update({
   id: '/properties',
@@ -88,6 +90,16 @@ const AdminPropertiesIdRoute = AdminPropertiesIdRouteImport.update({
   path: '/properties/$id',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminGuideArticlesNewRoute = AdminGuideArticlesNewRouteImport.update({
+  id: '/guide-articles/new',
+  path: '/guide-articles/new',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminGuideArticlesIdRoute = AdminGuideArticlesIdRouteImport.update({
+  id: '/guide-articles/$id',
+  path: '/guide-articles/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -99,6 +111,8 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/properties/$slug': typeof PropertiesSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/guide-articles/$id': typeof AdminGuideArticlesIdRoute
+  '/admin/guide-articles/new': typeof AdminGuideArticlesNewRoute
   '/admin/properties/$id': typeof AdminPropertiesIdRoute
   '/admin/properties/new': typeof AdminPropertiesNewRoute
   '/admin/guide-articles/': typeof AdminGuideArticlesIndexRoute
@@ -113,6 +127,8 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/properties/$slug': typeof PropertiesSlugRoute
   '/admin': typeof AdminIndexRoute
+  '/admin/guide-articles/$id': typeof AdminGuideArticlesIdRoute
+  '/admin/guide-articles/new': typeof AdminGuideArticlesNewRoute
   '/admin/properties/$id': typeof AdminPropertiesIdRoute
   '/admin/properties/new': typeof AdminPropertiesNewRoute
   '/admin/guide-articles': typeof AdminGuideArticlesIndexRoute
@@ -129,6 +145,8 @@ export interface FileRoutesById {
   '/admin_/login': typeof AdminLoginRoute
   '/properties_/$slug': typeof PropertiesSlugRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/guide-articles/$id': typeof AdminGuideArticlesIdRoute
+  '/admin/guide-articles/new': typeof AdminGuideArticlesNewRoute
   '/admin/properties/$id': typeof AdminPropertiesIdRoute
   '/admin/properties/new': typeof AdminPropertiesNewRoute
   '/admin/guide-articles/': typeof AdminGuideArticlesIndexRoute
@@ -146,6 +164,8 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/properties/$slug'
     | '/admin/'
+    | '/admin/guide-articles/$id'
+    | '/admin/guide-articles/new'
     | '/admin/properties/$id'
     | '/admin/properties/new'
     | '/admin/guide-articles/'
@@ -160,6 +180,8 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/properties/$slug'
     | '/admin'
+    | '/admin/guide-articles/$id'
+    | '/admin/guide-articles/new'
     | '/admin/properties/$id'
     | '/admin/properties/new'
     | '/admin/guide-articles'
@@ -175,6 +197,8 @@ export interface FileRouteTypes {
     | '/admin_/login'
     | '/properties_/$slug'
     | '/admin/'
+    | '/admin/guide-articles/$id'
+    | '/admin/guide-articles/new'
     | '/admin/properties/$id'
     | '/admin/properties/new'
     | '/admin/guide-articles/'
@@ -285,11 +309,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPropertiesIdRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/guide-articles/new': {
+      id: '/admin/guide-articles/new'
+      path: '/guide-articles/new'
+      fullPath: '/admin/guide-articles/new'
+      preLoaderRoute: typeof AdminGuideArticlesNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/guide-articles/$id': {
+      id: '/admin/guide-articles/$id'
+      path: '/guide-articles/$id'
+      fullPath: '/admin/guide-articles/$id'
+      preLoaderRoute: typeof AdminGuideArticlesIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminGuideArticlesIdRoute: typeof AdminGuideArticlesIdRoute
+  AdminGuideArticlesNewRoute: typeof AdminGuideArticlesNewRoute
   AdminPropertiesIdRoute: typeof AdminPropertiesIdRoute
   AdminPropertiesNewRoute: typeof AdminPropertiesNewRoute
   AdminGuideArticlesIndexRoute: typeof AdminGuideArticlesIndexRoute
@@ -298,6 +338,8 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
+  AdminGuideArticlesIdRoute: AdminGuideArticlesIdRoute,
+  AdminGuideArticlesNewRoute: AdminGuideArticlesNewRoute,
   AdminPropertiesIdRoute: AdminPropertiesIdRoute,
   AdminPropertiesNewRoute: AdminPropertiesNewRoute,
   AdminGuideArticlesIndexRoute: AdminGuideArticlesIndexRoute,
