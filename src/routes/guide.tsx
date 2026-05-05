@@ -1,20 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { buildHead, itemListGraph } from "@/lib/seo";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { Reveal } from "@/components/site/Reveal";
 import { useState } from "react";
-
-export const Route = createFileRoute("/guide")({
-  head: () => ({
-    meta: [
-      { title: "The Coastline, Curated — [BRAND]" },
-      { name: "description", content: "Eat, drink, walk, watch, wander. The places we send people first." },
-      { property: "og:title", content: "The Coastline, Curated — [BRAND]" },
-      { property: "og:description", content: "The places we send people first." },
-    ],
-  }),
-  component: GuidePage,
-});
 
 const filters = ["Eat", "Drink", "Walk", "Watch", "Wander"] as const;
 
@@ -26,6 +15,22 @@ const articles = [
   { cat: "Drink", title: "A small wine list, well chosen.", desc: "Eleven bottles, all from within an hour of the house. The bartender knows each grower by their first name. The other one matters less.", img: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1600&q=80" },
   { cat: "Wander", title: "The Saturday market at Paternoster.", desc: "Linen, fish, two kinds of honey, hand-thrown ceramics. Get there before nine if you can. Coffee from the trailer in the corner. Stay until you've spoken to someone.", img: "https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=1600&q=80" },
 ];
+
+export const Route = createFileRoute("/guide")({
+  head: () =>
+    buildHead({
+      title: "The Coastline, Curated — A West Coast Local Guide | [BRAND]",
+      description:
+        "Where to eat, drink, walk and watch on South Africa's West Coast. A short, considered local guide from people who live here.",
+      path: "/guide",
+      type: "article",
+      structuredData: itemListGraph(
+        "The Coastline, Curated",
+        articles.map((a) => ({ name: a.title, description: a.desc, image: a.img })),
+      ),
+    }),
+  component: GuidePage,
+});
 
 function GuidePage() {
   const [active, setActive] = useState<string | null>(null);

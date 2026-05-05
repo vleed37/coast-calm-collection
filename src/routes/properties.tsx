@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { buildHead } from "@/lib/seo";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { PropertyCard } from "@/components/site/PropertyCard";
@@ -6,14 +7,14 @@ import { Reveal } from "@/components/site/Reveal";
 import { properties } from "@/data/properties";
 
 export const Route = createFileRoute("/properties")({
-  head: () => ({
-    meta: [
-      { title: "The Collection — [BRAND]" },
-      { name: "description", content: "Three coastal homes, kept few on purpose." },
-      { property: "og:title", content: "The Collection — [BRAND]" },
-      { property: "og:description", content: "Three coastal homes, kept few on purpose." },
-    ],
-  }),
+  head: () =>
+    buildHead({
+      title: "The Collection — Three West Coast Villas | [BRAND]",
+      description:
+        "Three luxury self-catering villas on South Africa's West Coast. Beachfront and coastal locations, sleeping up to 14. View the full collection and enquire about availability.",
+      path: "/properties",
+      type: "website",
+    }),
   component: PropertiesPage,
 });
 

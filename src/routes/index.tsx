@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { buildHead, organizationGraph } from "@/lib/seo";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { PropertyCard } from "@/components/site/PropertyCard";
@@ -7,14 +8,17 @@ import { EnquirySheet } from "@/components/site/EnquirySheet";
 import { properties } from "@/data/properties";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "[BRAND] — Where the coastline pauses." },
-      { name: "description", content: "A small collection of homes on the West Coast. Stay slowly." },
-      { property: "og:title", content: "[BRAND] — Where the coastline pauses." },
-      { property: "og:description", content: "A small collection of homes on the West Coast." },
-    ],
-  }),
+  head: () =>
+    buildHead({
+      title: "Luxury West Coast Villa Rentals | [BRAND]",
+      description:
+        "A small collection of self-catering villas on South Africa's West Coast. Shelley Point, Britannia Bay, St Helena Bay. Direct booking enquiries — no platform fees.",
+      keywords:
+        "west coast villa rental, luxury holiday home south africa, shelley point accommodation, britannia bay villa, st helena bay self catering, west coast airbnb alternative",
+      path: "/",
+      type: "website",
+      structuredData: organizationGraph(),
+    }),
   component: Home,
 });
 
@@ -26,8 +30,13 @@ function Home() {
       {/* HERO */}
       <section className="relative h-screen w-full overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=2400&q=80"
-          alt=""
+          src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=2400&q=80&fm=webp"
+          alt="Modern coastal villa exterior at golden hour, infinity pool overlooking the Atlantic on South Africa's West Coast"
+          width={2400}
+          height={1600}
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-ink/20 via-transparent to-ink/60" />
