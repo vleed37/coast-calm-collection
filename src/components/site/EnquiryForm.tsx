@@ -111,7 +111,7 @@ export function EnquiryForm({
           return;
         }
         // Fire-and-forget notification
-        supabase.functions.invoke("notify-enquiry", { body: row }).catch(() => {});
+        supabase.functions.invoke("notify-enquiry", { body: { enquiry_id: row.id } }).catch(() => {});
         toast.success("Enquiry sent — we'll reply within a day.");
         setSubmitting(false);
         (e.target as HTMLFormElement).reset();
