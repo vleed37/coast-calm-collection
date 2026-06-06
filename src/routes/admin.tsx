@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
+import { adminAuth, adminToken } from "@/lib/admin-client";
 import { AdminShell } from "@/components/admin/AdminShell";
 
 export const Route = createFileRoute("/admin")({
@@ -11,8 +11,10 @@ export const Route = createFileRoute("/admin")({
   }),
   beforeLoad: async () => {
     if (typeof window === "undefined") return;
-    const { data } = await supabase.auth.getSession();
-    if (!data.session) {
+    if (!adminToken.get()) throw redirect({ to: "/admin/login" });
+    const ok = await adminAuth.verify();
+    if (!ok) {
+      adminAuth.logout();
       throw redirect({ to: "/admin/login" });
     }
   },
