@@ -1,5 +1,8 @@
 // Notifies Linda by email when a new enquiry is submitted.
-// Uses Resend when RESEND_API_KEY + LINDA_NOTIFY_EMAIL are set; otherwise logs.
+// Accepts only an enquiry_id and fetches the row server-side via the service-role
+// client, so callers cannot inject arbitrary email content.
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -9,7 +12,31 @@ const corsHeaders = {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
-    const enquiry = await req.json();
+    const payload = await req.json().catch(() => ({}));
+    const enquiryId = typeof payload?.enquiry_id === "string" ? payload.enquiry_id : null;
+    const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!enquiryId || !uuidRe.test(enquiryId)) {
+      return new Response(JSON.stringify({ ok: false, error: "invalid enquiry_id" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const admin = createClient(supabaseUrl, serviceKey);
+    const { data: enquiry, error: fetchErr } = await admin
+      .from("enquiries")
+      .select("name, email, phone, property_of_interest, check_in, check_out, message")
+      .eq("id", enquiryId)
+      .maybeSingle();
+    if (fetchErr || !enquiry) {
+      return new Response(JSON.stringify({ ok: false, error: "enquiry not found" }), {
+        status: 404,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const to = Deno.env.get("LINDA_NOTIFY_EMAIL");
     const apiKey = Deno.env.get("RESEND_API_KEY");
     const fromAddr = Deno.env.get("ENQUIRY_FROM_EMAIL") ?? "onboarding@resend.dev";
