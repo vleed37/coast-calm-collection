@@ -9,7 +9,7 @@ export function PropertyCard({ property, offset = false }: { property: Property;
           <div className="relative overflow-hidden bg-mist aspect-[3/4]">
             <img
               src={property.heroImage}
-              alt={property.name}
+              alt={`${property.name} — luxury villa on South Africa's West Coast`}
               loading="lazy"
               className="absolute inset-0 w-full h-full object-cover opacity-70"
             />
@@ -34,7 +34,7 @@ export function PropertyCard({ property, offset = false }: { property: Property;
         <div className="relative overflow-hidden bg-mist aspect-[3/4]">
           <img
             src={property.heroImage}
-            alt={property.name}
+            alt={`${property.name} — luxury villa on South Africa's West Coast`}
             loading="lazy"
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
           />

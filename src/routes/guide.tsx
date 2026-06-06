@@ -75,7 +75,7 @@ function GuidePage() {
                     <span className="smallcaps text-warmth">{a.category}</span>
                     <h2 className="font-display text-3xl md:text-4xl lg:text-5xl mt-6 font-light leading-[1.1]">{a.title}</h2>
                     <p className="mt-6 text-lg text-ink/80">{a.description}</p>
-                    <a href="#" className="smallcaps text-ocean link-underline mt-8 inline-block">Read more →</a>
+                    <a href="#" className="smallcaps text-ocean link-underline mt-8 inline-block">Read more about {a.title} →</a>
                   </div>
                 </article>
               </Reveal>

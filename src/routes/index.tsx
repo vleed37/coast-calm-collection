@@ -46,7 +46,7 @@ function Home() {
         <div className="absolute inset-0 flex flex-col justify-end pb-32 px-6 md:px-16">
           <div className="max-w-[1320px] mx-auto w-full">
             <h1 className="font-display italic font-light text-cream text-6xl md:text-8xl lg:text-9xl leading-[0.95] max-w-4xl">
-              Where the coastline<br />pauses.
+              Luxury West Coast<br />Villa Rentals.
             </h1>
             <p className="smallcaps text-cream/80 mt-8">A small collection of homes on the West Coast.</p>
           </div>
