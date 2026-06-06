@@ -101,6 +101,18 @@ export const adminPhotos = {
       body: JSON.stringify({ id }),
     });
   },
+  async uploadAsset(file: File, folder = "assets"): Promise<{ url: string; storage_path: string }> {
+    const resized = await resizeImage(file, 2400, 0.82);
+    const form = new FormData();
+    form.append("file", resized.blob, resized.name);
+    form.append("folder", folder);
+    const body = await call("admin-photos", "upload-asset", {
+      method: "POST",
+      headers: headers(),
+      body: form,
+    });
+    return { url: body.url, storage_path: body.storage_path };
+  },
 };
 
 async function resizeImage(file: File, maxWidth: number, quality: number) {

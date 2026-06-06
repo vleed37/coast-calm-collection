@@ -119,6 +119,25 @@ Deno.serve(async (req) => {
       return json({ ok: true, count: rows?.length ?? 0 });
     }
 
+    if (action === "upload-asset" && req.method === "POST") {
+      // One-off image upload (e.g. setting image). Does NOT insert into property_photos.
+      const form = await req.formData();
+      const file = form.get("file");
+      const folder = String(form.get("folder") || "assets");
+      if (!(file instanceof File)) return json({ error: "file required" }, 400);
+      const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+      const path = `${folder}/${crypto.randomUUID()}.${ext}`;
+      const buf = new Uint8Array(await file.arrayBuffer());
+      const up = await supabase.storage.from(BUCKET).upload(path, buf, {
+        contentType: file.type || "image/jpeg",
+        upsert: false,
+      });
+      if (up.error) return json({ error: up.error.message }, 400);
+      const signed = await supabase.storage.from(BUCKET).createSignedUrl(path, SIGNED_URL_TTL);
+      if (signed.error || !signed.data) return json({ error: signed.error?.message || "sign failed" }, 400);
+      return json({ url: signed.data.signedUrl, storage_path: path });
+    }
+
     return json({ error: "Not found" }, 404);
   } catch (e) {
     return json({ error: (e as Error).message }, 500);

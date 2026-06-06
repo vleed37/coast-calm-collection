@@ -16,6 +16,8 @@ import {
   AlertDialogTitle, AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
 import { Plus, Trash2, X } from "lucide-react";
+import { PhotoManager } from "@/components/admin/PhotoManager";
+import { SingleImageUploader } from "@/components/admin/SingleImageUploader";
 
 const slugify = (s: string) =>
   s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -35,8 +37,6 @@ const schema = z.object({
   from_price: z.string().min(1).max(100),
   setting_copy: z.string().min(1),
   setting_image: z.string().url().or(z.literal("")).optional(),
-  hero_image: z.string().url(),
-  gallery: z.array(z.object({ url: z.string().url() })),
   features: z.array(z.object({ value: z.string().min(1) })),
   vignettes: z.array(z.object({ title: z.string().min(1), body: z.string().min(1) })),
   sort_order: z.coerce.number().int(),
@@ -60,13 +60,12 @@ export function PropertyForm({ id }: { id?: string }) {
       name: "", slug: "", location: "", description: "", pull_quote: "",
       is_published: true, long_copy_text: "", beds: 0, baths: 0, guests: 0,
       min_stay: "", from_price: "", setting_copy: "", setting_image: "",
-      hero_image: "", gallery: [], features: [], vignettes: [],
+      features: [], vignettes: [],
       sort_order: 0, seo_title: "", seo_description: "", seo_keywords: "", seo_og_image: "",
     },
   });
 
   const { register, handleSubmit, control, watch, setValue, formState: { errors } } = form;
-  const gallery = useFieldArray({ control, name: "gallery" });
   const features = useFieldArray({ control, name: "features" });
   const vignettes = useFieldArray({ control, name: "vignettes" });
 
@@ -90,8 +89,6 @@ export function PropertyForm({ id }: { id?: string }) {
         beds: data.beds, baths: data.baths, guests: data.guests,
         min_stay: data.min_stay, from_price: data.from_price,
         setting_copy: data.setting_copy, setting_image: data.setting_image ?? "",
-        hero_image: data.hero_image,
-        gallery: (data.gallery ?? []).map((url: string) => ({ url })),
         features: (data.features ?? []).map((value: string) => ({ value })),
         vignettes: Array.isArray(data.experience_vignettes)
           ? (data.experience_vignettes as Array<{ title: string; body: string }>)
@@ -114,8 +111,6 @@ export function PropertyForm({ id }: { id?: string }) {
       beds: v.beds, baths: v.baths, guests: v.guests,
       min_stay: v.min_stay, from_price: v.from_price,
       setting_copy: v.setting_copy, setting_image: v.setting_image || null,
-      hero_image: v.hero_image,
-      gallery: v.gallery.map((g) => g.url),
       features: v.features.map((f) => f.value),
       experience_vignettes: v.vignettes,
       sort_order: v.sort_order,
@@ -194,7 +189,18 @@ export function PropertyForm({ id }: { id?: string }) {
 
       <Section title="The Setting">
         <Field label="Setting copy"><Textarea rows={4} {...register("setting_copy")} /></Field>
-        <ImageField label="Setting image URL" name="setting_image" register={register} watch={watch} error={errors.setting_image?.message} />
+        <Controller
+          control={control}
+          name="setting_image"
+          render={({ field }) => (
+            <SingleImageUploader
+              label="Setting image"
+              value={field.value ?? ""}
+              onChange={field.onChange}
+              folder="setting"
+            />
+          )}
+        />
       </Section>
 
       <Section title="The Experience">
@@ -212,29 +218,19 @@ export function PropertyForm({ id }: { id?: string }) {
         </Button>
       </Section>
 
-      <Section title="Images">
-        <ImageField label="Hero image URL" name="hero_image" register={register} watch={watch} error={errors.hero_image?.message} />
-        <div>
-          <Label className="mb-2 block">Gallery</Label>
-          <div className="space-y-2">
-            {gallery.fields.map((f, i) => (
-              <div key={f.id} className="flex gap-2 items-start">
-                <div className="flex-1">
-                  <Input {...register(`gallery.${i}.url` as const)} placeholder="https://…" />
-                  {watch(`gallery.${i}.url`) && (
-                    <img src={watch(`gallery.${i}.url`)} alt="" className="mt-2 w-32 h-20 object-cover rounded" />
-                  )}
-                </div>
-                <Button type="button" variant="ghost" size="icon" onClick={() => gallery.remove(i)}>
-                  <X className="w-4 h-4" />
-                </Button>
-              </div>
-            ))}
-          </div>
-          <Button type="button" variant="outline" className="mt-3" onClick={() => gallery.append({ url: "" })}>
-            <Plus className="w-4 h-4 mr-2" />Add image
-          </Button>
-        </div>
+      <Section title="Photos">
+        {id ? (
+          <>
+            <p className="text-xs text-ink/60 -mt-2">
+              Drag &amp; drop or choose files. The first photo becomes the cover automatically; use the star icon to change it.
+            </p>
+            <PhotoManager propertyId={id} />
+          </>
+        ) : (
+          <p className="text-sm text-ink/60">
+            Save the property first — you'll then be able to upload photos here.
+          </p>
+        )}
       </Section>
 
       <Section title="Features">
