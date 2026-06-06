@@ -9,7 +9,7 @@ Deno.serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { table, op, id, payload, match } = body || {};
+    const { table, op, id, payload, match, filter, select, order } = body || {};
     if (!ALLOWED.has(table)) return json({ error: "Invalid table" }, 400);
 
     const supabase = createClient(
@@ -32,6 +32,15 @@ Deno.serve(async (req) => {
       // Convenience for fetching a single row by id (e.g. duplicate flow).
       if (!id) return json({ error: "id required for select" }, 400);
       q = supabase.from(table).select("*").eq("id", id).single();
+    } else if (op === "list") {
+      let lq = supabase.from(table).select(select || "*");
+      if (filter && typeof filter === "object") {
+        for (const [k, v] of Object.entries(filter)) lq = lq.eq(k, v as never);
+      }
+      if (order && order.column) {
+        lq = lq.order(order.column, { ascending: order.ascending !== false });
+      }
+      q = lq;
     } else if (op === "bulk_update" && Array.isArray(match)) {
       // match: [{ id, payload }]
       const results = [];
