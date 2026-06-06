@@ -188,6 +188,42 @@ export function faqGraph(faqs: Array<{ q: string; a: string }>) {
   };
 }
 
+export function collectionPageGraph(
+  name: string,
+  description: string,
+  path: string,
+  properties: Property[]
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name,
+    description,
+    url: `${SITE_URL}${path}`,
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: properties.map((p, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        item: {
+          "@type": "LodgingBusiness",
+          name: p.name,
+          description: p.description,
+          image: p.heroImage,
+          url: `${SITE_URL}/properties/${p.id}`,
+          priceRange: `From ${p.fromPrice} per night`,
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: p.location,
+            addressRegion: "Western Cape",
+            addressCountry: "ZA",
+          },
+        },
+      })),
+    },
+  };
+}
+
 export function itemListGraph(
   name: string,
   items: Array<{ name: string; description?: string; image?: string }>
