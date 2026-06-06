@@ -63,7 +63,9 @@ function mapRow(row: any): Property {
     heroImage: cover,
     gallery,
     settingCopy: row.setting_copy ?? "",
-    settingImage: row.setting_image ?? null,
+    // Setting image falls back to the cover photo so the admin doesn't
+    // need to upload a separate image just for "The Setting" section.
+    settingImage: row.setting_image ?? cover ?? null,
     experienceVignettes: vignettes,
     comingSoon: row.coming_soon ?? false,
     seoTitle: row.seo_title ?? null,
