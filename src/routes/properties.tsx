@@ -1,5 +1,5 @@
 import { createFileRoute, ErrorComponent } from "@tanstack/react-router";
-import { buildHead } from "@/lib/seo";
+import { buildHead, collectionPageGraph } from "@/lib/seo";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { PropertyCard } from "@/components/site/PropertyCard";
@@ -9,13 +9,19 @@ import { fetchPublishedProperties } from "@/lib/queries/properties";
 export const Route = createFileRoute("/properties")({
   loader: () => fetchPublishedProperties(),
   errorComponent: ({ error }) => <ErrorComponent error={error} />,
-  head: () =>
+  head: ({ loaderData }) =>
     buildHead({
       title: "The Collection — West Coast Villas | Lone Bull Properties",
       description:
         "Four luxury self-catering holiday homes in St Helena Bay on South Africa's West Coast. Beachfront locations, sleeping up to 4.",
       path: "/properties",
       type: "website",
+      structuredData: collectionPageGraph(
+        "The Collection",
+        "Four luxury self-catering holiday homes in St Helena Bay on South Africa's West Coast.",
+        "/properties",
+        loaderData ?? []
+      ),
     }),
   component: PropertiesPage,
 });
