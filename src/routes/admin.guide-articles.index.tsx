@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { adminData } from "@/lib/admin-client";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 import { Button } from "@/components/ui/button";
 import { Plus, Edit, Trash2 } from "lucide-react";
@@ -20,19 +20,22 @@ function ArticlesList() {
   const navigate = useNavigate();
 
   const load = async () => {
-    const { data, error } = await supabase
-      .from("guide_articles")
-      .select("id,title,category,is_published,updated_at,sort_order")
-      .order("sort_order");
-    if (error) { toast.error(error.message); return; }
-    setRows(data ?? []);
+    try {
+      const data = await adminData<any[]>({
+        table: "guide_articles", op: "list",
+        select: "id,title,category,is_published,updated_at,sort_order",
+        order: { column: "sort_order", ascending: true },
+      });
+      setRows(data ?? []);
+    } catch (e) { toast.error((e as Error).message); }
   };
   useEffect(() => { load(); }, []);
 
   const remove = async (id: string) => {
-    const { error } = await supabase.from("guide_articles").delete().eq("id", id);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Deleted"); load();
+    try {
+      await adminData({ table: "guide_articles", op: "delete", id });
+      toast.success("Deleted"); load();
+    } catch (e) { toast.error((e as Error).message); }
   };
 
   return (

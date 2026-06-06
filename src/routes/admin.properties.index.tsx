@@ -1,9 +1,9 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { adminData } from "@/lib/admin-client";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 import { Button } from "@/components/ui/button";
-import { Plus, Edit, Copy, Trash2 } from "lucide-react";
+import { Plus, Edit, Copy, Trash2, Images } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -25,31 +25,34 @@ function PropertiesList() {
   const navigate = useNavigate();
 
   const load = async () => {
-    const { data, error } = await supabase
-      .from("properties")
-      .select("id,name,location,slug,is_published,updated_at")
-      .order("sort_order", { ascending: true });
-    if (error) { toast.error(error.message); return; }
-    setRows(data as Row[]);
+    try {
+      const data = await adminData<Row[]>({
+        table: "properties", op: "list",
+        select: "id,name,location,slug,is_published,updated_at",
+        order: { column: "sort_order", ascending: true },
+      });
+      setRows(data);
+    } catch (e) { toast.error((e as Error).message); }
   };
   useEffect(() => { load(); }, []);
 
   const duplicate = async (id: string) => {
-    const { data, error } = await supabase.from("properties").select("*").eq("id", id).single();
-    if (error || !data) { toast.error("Failed"); return; }
-    const { id: _i, created_at: _c, updated_at: _u, ...rest } = data;
-    const copy = { ...rest, name: `${rest.name} (copy)`, slug: `${rest.slug}-copy-${Date.now().toString(36)}`, is_published: false };
-    const ins = await supabase.from("properties").insert(copy);
-    if (ins.error) { toast.error(ins.error.message); return; }
-    toast.success("Duplicated");
-    load();
+    try {
+      const data = await adminData<any>({ table: "properties", op: "select", id });
+      const { id: _i, created_at: _c, updated_at: _u, ...rest } = data;
+      const copy = { ...rest, name: `${rest.name} (copy)`, slug: `${rest.slug}-copy-${Date.now().toString(36)}`, is_published: false };
+      await adminData({ table: "properties", op: "insert", payload: copy });
+      toast.success("Duplicated");
+      load();
+    } catch (e) { toast.error((e as Error).message); }
   };
 
   const remove = async (id: string) => {
-    const { error } = await supabase.from("properties").delete().eq("id", id);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Deleted");
-    load();
+    try {
+      await adminData({ table: "properties", op: "delete", id });
+      toast.success("Deleted");
+      load();
+    } catch (e) { toast.error((e as Error).message); }
   };
 
   return (

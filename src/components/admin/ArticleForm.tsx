@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
+import { adminData } from "@/lib/admin-client";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -59,8 +59,9 @@ export function ArticleForm({ id }: { id?: string }) {
   useEffect(() => {
     if (!id) return;
     (async () => {
-      const { data, error } = await supabase.from("guide_articles").select("*").eq("id", id).single();
-      if (error || !data) { toast.error("Could not load"); return; }
+      let data: any;
+      try { data = await adminData<any>({ table: "guide_articles", op: "select", id }); }
+      catch { toast.error("Could not load"); return; }
       form.reset({
         slug: data.slug, category: data.category as any, title: data.title,
         description: data.description, image: data.image, body: data.body ?? "",
@@ -77,21 +78,22 @@ export function ArticleForm({ id }: { id?: string }) {
       ...v, body: v.body || null,
       seo_title: v.seo_title || null, seo_description: v.seo_description || null,
     };
-    const res = id
-      ? await supabase.from("guide_articles").update(payload).eq("id", id)
-      : await supabase.from("guide_articles").insert(payload);
-    setSaving(false);
-    if (res.error) { toast.error(res.error.message); return; }
-    toast.success(id ? "Saved" : "Created");
-    navigate({ to: "/admin/guide-articles" });
+    try {
+      if (id) await adminData({ table: "guide_articles", op: "update", id, payload });
+      else await adminData({ table: "guide_articles", op: "insert", payload });
+      toast.success(id ? "Saved" : "Created");
+      navigate({ to: "/admin/guide-articles" });
+    } catch (e) { toast.error((e as Error).message); }
+    finally { setSaving(false); }
   };
 
   const onDelete = async () => {
     if (!id) return;
-    const { error } = await supabase.from("guide_articles").delete().eq("id", id);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Deleted");
-    navigate({ to: "/admin/guide-articles" });
+    try {
+      await adminData({ table: "guide_articles", op: "delete", id });
+      toast.success("Deleted");
+      navigate({ to: "/admin/guide-articles" });
+    } catch (e) { toast.error((e as Error).message); }
   };
 
   if (loading) return <p className="text-ink/60">Loading…</p>;
