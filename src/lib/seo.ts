@@ -2,7 +2,7 @@ import type { Property } from "@/lib/queries/properties";
 
 // TODO: replace at deploy with the live custom domain
 export const SITE_URL = "https://placeholder-domain.com";
-export const SITE_NAME = "[BRAND]";
+export const SITE_NAME = "Lone Bull Properties";
 export const LOCALE = "en_ZA";
 export const ORG_DESCRIPTION =
   "Luxury self-catering villa rentals on South Africa's West Coast. Direct bookings, three properties, hand-picked locations from Shelley Point to St Helena Bay.";

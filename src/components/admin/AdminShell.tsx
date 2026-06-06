@@ -26,7 +26,7 @@ export function AdminShell() {
     <div className="min-h-screen bg-cream flex">
       <aside className="w-64 bg-ink text-cream flex flex-col fixed inset-y-0 left-0">
         <div className="px-6 py-8 border-b border-cream/10">
-          <span className="font-display text-2xl font-light">[BRAND]</span>
+          <span className="font-display text-2xl font-light">Lone Bull Properties</span>
           <p className="smallcaps text-cream/50 mt-2">Admin</p>
         </div>
         <nav className="flex-1 px-3 py-6 flex flex-col gap-1">

@@ -28,7 +28,7 @@ export function Nav({ transparentOverHero = false }: { transparentOverHero?: boo
     >
       <div className="max-w-[1320px] mx-auto px-6 md:px-12 py-6 flex flex-col items-center gap-5">
         <Link to="/" className={`font-display text-2xl tracking-[0.3em] font-light ${textColor}`}>
-          [BRAND]
+          Lone Bull Properties
         </Link>
         <nav className={`flex flex-wrap justify-center gap-x-8 gap-y-2 ${textColor}`}>
           {links.map((l) => (

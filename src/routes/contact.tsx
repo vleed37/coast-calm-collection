@@ -8,7 +8,7 @@ import { useState } from "react";
 export const Route = createFileRoute("/contact")({
   head: () =>
     buildHead({
-      title: "Begin a Conversation | [BRAND]",
+      title: "Begin a Conversation | Lone Bull Properties",
       description:
         "Direct booking enquiries for our West Coast villas. We reply within a day, often sooner.",
       path: "/contact",

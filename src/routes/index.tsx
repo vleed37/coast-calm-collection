@@ -12,7 +12,7 @@ export const Route = createFileRoute("/")({
   errorComponent: ({ error }) => <ErrorComponent error={error} />,
   head: () =>
     buildHead({
-      title: "Luxury West Coast Villa Rentals | [BRAND]",
+      title: "Luxury West Coast Villa Rentals | Lone Bull Properties",
       description:
         "A small collection of self-catering villas on South Africa's West Coast. Shelley Point, Britannia Bay, St Helena Bay. Direct booking enquiries — no platform fees.",
       keywords:

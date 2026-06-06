@@ -11,7 +11,7 @@ export const Route = createFileRoute("/properties")({
   errorComponent: ({ error }) => <ErrorComponent error={error} />,
   head: () =>
     buildHead({
-      title: "The Collection — Three West Coast Villas | [BRAND]",
+      title: "The Collection — Three West Coast Villas | Lone Bull Properties",
       description:
         "Three luxury self-catering villas on South Africa's West Coast. Beachfront and coastal locations, sleeping up to 14. View the full collection and enquire about availability.",
       path: "/properties",
