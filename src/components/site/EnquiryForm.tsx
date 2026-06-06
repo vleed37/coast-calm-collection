@@ -8,9 +8,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
 
-function FieldLabel({ children }: { children: ReactNode }) {
+function FieldLabel({ children, htmlFor }: { children: ReactNode; htmlFor?: string }) {
   return (
-    <label className="block uppercase tracking-[0.2em] text-xs text-warmth font-sans mb-3">
+    <label htmlFor={htmlFor} className="block uppercase tracking-[0.2em] text-xs text-warmth font-sans mb-3">
       {children}
     </label>
   );
@@ -133,8 +133,8 @@ export function EnquiryForm({
         <input type="tel" name="phone" className={inputCls} />
       </div>
       <div>
-        <FieldLabel>Property of interest</FieldLabel>
-        <select name="property" defaultValue={defaultProperty ?? ""} className={inputCls}>
+        <FieldLabel htmlFor="property-interest">Property of interest</FieldLabel>
+        <select id="property-interest" name="property" defaultValue={defaultProperty ?? ""} className={inputCls}>
           <option value="">I'm not sure yet</option>
           {propertyOptions.map((p) => (
             <option key={p.id} value={p.id}>
