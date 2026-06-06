@@ -31,10 +31,7 @@ export const Route = createRootRoute({
       { name: "robots", content: "index, follow" },
       { name: "theme-color", content: "#F8F5EF" },
       { name: "format-detection", content: "telephone=no" },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/575eed37-59bc-4a46-9f50-1ef38686079b/id-preview-f6e837f7--18347824-79e0-457c-b4db-833ad2ea070b.lovable.app-1780760589001.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/575eed37-59bc-4a46-9f50-1ef38686079b/id-preview-f6e837f7--18347824-79e0-457c-b4db-833ad2ea070b.lovable.app-1780760589001.png" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:type", content: "website" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
