@@ -25,6 +25,7 @@ import { Route as AdminPropertiesNewRouteImport } from './routes/admin.propertie
 import { Route as AdminPropertiesIdRouteImport } from './routes/admin.properties.$id'
 import { Route as AdminGuideArticlesNewRouteImport } from './routes/admin.guide-articles.new'
 import { Route as AdminGuideArticlesIdRouteImport } from './routes/admin.guide-articles.$id'
+import { Route as AdminPropertiesIdPhotosRouteImport } from './routes/admin.properties.$id.photos'
 
 const PropertiesRoute = PropertiesRouteImport.update({
   id: '/properties',
@@ -106,6 +107,11 @@ const AdminGuideArticlesIdRoute = AdminGuideArticlesIdRouteImport.update({
   path: '/guide-articles/$id',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPropertiesIdPhotosRoute = AdminPropertiesIdPhotosRouteImport.update({
+  id: '/photos',
+  path: '/photos',
+  getParentRoute: () => AdminPropertiesIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -120,10 +126,11 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/admin/guide-articles/$id': typeof AdminGuideArticlesIdRoute
   '/admin/guide-articles/new': typeof AdminGuideArticlesNewRoute
-  '/admin/properties/$id': typeof AdminPropertiesIdRoute
+  '/admin/properties/$id': typeof AdminPropertiesIdRouteWithChildren
   '/admin/properties/new': typeof AdminPropertiesNewRoute
   '/admin/guide-articles/': typeof AdminGuideArticlesIndexRoute
   '/admin/properties/': typeof AdminPropertiesIndexRoute
+  '/admin/properties/$id/photos': typeof AdminPropertiesIdPhotosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -137,10 +144,11 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/admin/guide-articles/$id': typeof AdminGuideArticlesIdRoute
   '/admin/guide-articles/new': typeof AdminGuideArticlesNewRoute
-  '/admin/properties/$id': typeof AdminPropertiesIdRoute
+  '/admin/properties/$id': typeof AdminPropertiesIdRouteWithChildren
   '/admin/properties/new': typeof AdminPropertiesNewRoute
   '/admin/guide-articles': typeof AdminGuideArticlesIndexRoute
   '/admin/properties': typeof AdminPropertiesIndexRoute
+  '/admin/properties/$id/photos': typeof AdminPropertiesIdPhotosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -156,10 +164,11 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/admin/guide-articles/$id': typeof AdminGuideArticlesIdRoute
   '/admin/guide-articles/new': typeof AdminGuideArticlesNewRoute
-  '/admin/properties/$id': typeof AdminPropertiesIdRoute
+  '/admin/properties/$id': typeof AdminPropertiesIdRouteWithChildren
   '/admin/properties/new': typeof AdminPropertiesNewRoute
   '/admin/guide-articles/': typeof AdminGuideArticlesIndexRoute
   '/admin/properties/': typeof AdminPropertiesIndexRoute
+  '/admin/properties/$id/photos': typeof AdminPropertiesIdPhotosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -180,6 +189,7 @@ export interface FileRouteTypes {
     | '/admin/properties/new'
     | '/admin/guide-articles/'
     | '/admin/properties/'
+    | '/admin/properties/$id/photos'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -197,6 +207,7 @@ export interface FileRouteTypes {
     | '/admin/properties/new'
     | '/admin/guide-articles'
     | '/admin/properties'
+    | '/admin/properties/$id/photos'
   id:
     | '__root__'
     | '/'
@@ -215,6 +226,7 @@ export interface FileRouteTypes {
     | '/admin/properties/new'
     | '/admin/guide-articles/'
     | '/admin/properties/'
+    | '/admin/properties/$id/photos'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -342,15 +354,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminGuideArticlesIdRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/properties/$id/photos': {
+      id: '/admin/properties/$id/photos'
+      path: '/photos'
+      fullPath: '/admin/properties/$id/photos'
+      preLoaderRoute: typeof AdminPropertiesIdPhotosRouteImport
+      parentRoute: typeof AdminPropertiesIdRoute
+    }
   }
 }
+
+interface AdminPropertiesIdRouteChildren {
+  AdminPropertiesIdPhotosRoute: typeof AdminPropertiesIdPhotosRoute
+}
+
+const AdminPropertiesIdRouteChildren: AdminPropertiesIdRouteChildren = {
+  AdminPropertiesIdPhotosRoute: AdminPropertiesIdPhotosRoute,
+}
+
+const AdminPropertiesIdRouteWithChildren =
+  AdminPropertiesIdRoute._addFileChildren(AdminPropertiesIdRouteChildren)
 
 interface AdminRouteChildren {
   AdminEnquiriesRoute: typeof AdminEnquiriesRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminGuideArticlesIdRoute: typeof AdminGuideArticlesIdRoute
   AdminGuideArticlesNewRoute: typeof AdminGuideArticlesNewRoute
-  AdminPropertiesIdRoute: typeof AdminPropertiesIdRoute
+  AdminPropertiesIdRoute: typeof AdminPropertiesIdRouteWithChildren
   AdminPropertiesNewRoute: typeof AdminPropertiesNewRoute
   AdminGuideArticlesIndexRoute: typeof AdminGuideArticlesIndexRoute
   AdminPropertiesIndexRoute: typeof AdminPropertiesIndexRoute
@@ -361,7 +391,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
   AdminGuideArticlesIdRoute: AdminGuideArticlesIdRoute,
   AdminGuideArticlesNewRoute: AdminGuideArticlesNewRoute,
-  AdminPropertiesIdRoute: AdminPropertiesIdRoute,
+  AdminPropertiesIdRoute: AdminPropertiesIdRouteWithChildren,
   AdminPropertiesNewRoute: AdminPropertiesNewRoute,
   AdminGuideArticlesIndexRoute: AdminGuideArticlesIndexRoute,
   AdminPropertiesIndexRoute: AdminPropertiesIndexRoute,

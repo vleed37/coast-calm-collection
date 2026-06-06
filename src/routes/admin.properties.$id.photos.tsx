@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { adminPhotos, adminData } from "@/lib/admin-client";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 import { Button } from "@/components/ui/button";
@@ -35,17 +34,13 @@ function PhotosPage() {
     try {
       const prop = await adminData<{ name: string }>({ table: "properties", op: "select", id });
       setPropName(prop.name);
-      // Photos table is anon-readable for published rows; for unpublished, admin token isn't
-      // used by client. We'll fetch via supabase (works for published) — for drafts, photos
-      // appear via the inserted row response after upload, so this is acceptable for v1.
-      const { data, error } = await supabase
-        .from("property_photos")
-        .select("id, image_url, is_cover, sort_order")
-        .eq("property_id", id)
-        .order("is_cover", { ascending: false })
-        .order("sort_order", { ascending: true });
-      if (error) throw error;
-      setPhotos((data ?? []) as Photo[]);
+      const data = await adminData<Photo[]>({
+        table: "property_photos", op: "list",
+        select: "id, image_url, is_cover, sort_order",
+        filter: { property_id: id },
+        order: { column: "sort_order", ascending: true },
+      });
+      setPhotos(data ?? []);
     } catch (e) { toast.error((e as Error).message); }
     finally { setLoading(false); }
   };

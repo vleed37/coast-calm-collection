@@ -47,7 +47,7 @@ export const adminAuth = {
 };
 
 type DataArgs = {
-  table: "properties" | "guide_articles" | "enquiries";
+  table: "properties" | "guide_articles" | "enquiries" | "property_photos";
   op: "list" | "select" | "insert" | "update" | "delete" | "upsert";
   id?: string;
   payload?: unknown;
