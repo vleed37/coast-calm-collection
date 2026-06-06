@@ -43,6 +43,10 @@ function mapRow(row: any): Property {
   const cover = photos.find((p: any) => p.is_cover)?.image_url
     ?? photos[0]?.image_url
     ?? row.hero_image;
+  // The Setting image, if uploaded, is treated as the canonical hero/main
+  // image for the property — it drives both the detail-page hero and the
+  // Properties listing card. Falls back to the photo-manager cover.
+  const hero = row.setting_image ?? cover;
   const rest = photos.filter((p: any) => !p.is_cover).map((p: any) => p.image_url);
   const gallery = rest.length > 0 ? rest : (row.gallery ?? []);
   return {
@@ -60,11 +64,9 @@ function mapRow(row: any): Property {
     pullQuote: row.pull_quote ?? "",
     experience: vignettes.map((v) => v.body).join(" "),
     features: row.features ?? [],
-    heroImage: cover,
+    heroImage: hero,
     gallery,
     settingCopy: row.setting_copy ?? "",
-    // Setting image falls back to the cover photo so the admin doesn't
-    // need to upload a separate image just for "The Setting" section.
     settingImage: row.setting_image ?? cover ?? null,
     experienceVignettes: vignettes,
     comingSoon: row.coming_soon ?? false,
