@@ -91,8 +91,8 @@ export function PropertyForm({ id }: { id?: string }) {
         min_stay: data.min_stay, from_price: data.from_price,
         setting_copy: data.setting_copy, setting_image: data.setting_image ?? "",
         hero_image: data.hero_image,
-        gallery: (data.gallery ?? []).map((url) => ({ url })),
-        features: (data.features ?? []).map((value) => ({ value })),
+        gallery: (data.gallery ?? []).map((url: string) => ({ url })),
+        features: (data.features ?? []).map((value: string) => ({ value })),
         vignettes: Array.isArray(data.experience_vignettes)
           ? (data.experience_vignettes as Array<{ title: string; body: string }>)
           : [],
