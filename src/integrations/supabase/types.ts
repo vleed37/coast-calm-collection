@@ -105,6 +105,7 @@ export type Database = {
         Row: {
           baths: number
           beds: number
+          coming_soon: boolean
           created_at: string
           description: string
           experience_vignettes: Json
@@ -133,6 +134,7 @@ export type Database = {
         Insert: {
           baths: number
           beds: number
+          coming_soon?: boolean
           created_at?: string
           description: string
           experience_vignettes?: Json
@@ -161,6 +163,7 @@ export type Database = {
         Update: {
           baths?: number
           beds?: number
+          coming_soon?: boolean
           created_at?: string
           description?: string
           experience_vignettes?: Json
