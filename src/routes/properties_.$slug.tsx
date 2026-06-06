@@ -242,7 +242,7 @@ function PropertyPage() {
             <div className="mt-12 text-left">
               {[
                 ["Check-In", "14:00"],
-                ["Check-Out", "11:00"],
+                ["Check-Out", "10:00"],
                 ["Maximum Guests", String(property.guests)],
                 ["Minimum Stay", property.minStay],
               ].map(([k, v]) => (
