@@ -191,6 +191,50 @@ export type Database = {
         }
         Relationships: []
       }
+      property_photos: {
+        Row: {
+          created_at: string
+          height: number | null
+          id: string
+          image_url: string
+          is_cover: boolean
+          property_id: string
+          sort_order: number
+          storage_path: string | null
+          width: number | null
+        }
+        Insert: {
+          created_at?: string
+          height?: number | null
+          id?: string
+          image_url: string
+          is_cover?: boolean
+          property_id: string
+          sort_order?: number
+          storage_path?: string | null
+          width?: number | null
+        }
+        Update: {
+          created_at?: string
+          height?: number | null
+          id?: string
+          image_url?: string
+          is_cover?: boolean
+          property_id?: string
+          sort_order?: number
+          storage_path?: string | null
+          width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_photos_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
