@@ -94,6 +94,9 @@ function PropertiesList() {
                       <Button size="icon" variant="ghost" onClick={() => navigate({ to: "/admin/properties/$id", params: { id: r.id } })}>
                         <Edit className="w-4 h-4" />
                       </Button>
+                      <Button size="icon" variant="ghost" title="Manage photos" onClick={() => navigate({ to: "/admin/properties/$id/photos", params: { id: r.id } })}>
+                        <Images className="w-4 h-4" />
+                      </Button>
                       <Button size="icon" variant="ghost" onClick={() => duplicate(r.id)}>
                         <Copy className="w-4 h-4" />
                       </Button>
