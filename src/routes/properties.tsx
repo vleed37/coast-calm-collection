@@ -11,9 +11,9 @@ export const Route = createFileRoute("/properties")({
   errorComponent: ({ error }) => <ErrorComponent error={error} />,
   head: () =>
     buildHead({
-      title: "The Collection — Four West Coast Villas | Lone Bull Properties",
+      title: "The Collection — Luxury West Coast Villas | Lone Bull Properties",
       description:
-        "Four luxury self-catering holiday homes in St Helena Bay on South Africa's West Coast. Beachfront and coastal locations, sleeping up to 4. View the full collection and enquire about availability.",
+        "Four luxury self-catering holiday homes in St Helena Bay on South Africa's West Coast. Beachfront locations, sleeping up to 4.",
       path: "/properties",
       type: "website",
     }),
