@@ -14,7 +14,7 @@ export const Route = createFileRoute("/")({
     buildHead({
       title: "Luxury West Coast Villa Rentals | Lone Bull Properties",
       description:
-        "A small collection of self-catering villas on South Africa's West Coast. Shelley Point, Britannia Bay, St Helena Bay. Direct booking enquiries — no platform fees.",
+        "A small collection of self-catering villas on South Africa's West Coast. Direct booking enquiries — no platform fees.",
       keywords:
         "west coast villa rental, luxury holiday home south africa, shelley point accommodation, britannia bay villa, st helena bay self catering, west coast airbnb alternative",
       path: "/",
