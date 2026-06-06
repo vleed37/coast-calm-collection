@@ -23,6 +23,7 @@ export type Property = {
   settingCopy: string;
   settingImage: string | null;
   experienceVignettes: Vignette[];
+  comingSoon: boolean;
   // SEO overrides
   seoTitle: string | null;
   seoDescription: string | null;
@@ -54,6 +55,7 @@ function mapRow(row: any): Property {
     settingCopy: row.setting_copy ?? "",
     settingImage: row.setting_image ?? null,
     experienceVignettes: vignettes,
+    comingSoon: row.coming_soon ?? false,
     seoTitle: row.seo_title ?? null,
     seoDescription: row.seo_description ?? null,
     seoKeywords: row.seo_keywords ?? null,
@@ -77,6 +79,7 @@ export async function fetchPropertyBySlug(slug: string): Promise<Property | null
     .select("*")
     .eq("slug", slug)
     .eq("is_published", true)
+    .eq("coming_soon", false)
     .maybeSingle();
   if (error) throw error;
   return data ? mapRow(data) : null;

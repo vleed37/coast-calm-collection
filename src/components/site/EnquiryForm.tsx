@@ -59,6 +59,7 @@ export function EnquiryForm({
       .from("properties")
       .select("slug, name")
       .eq("is_published", true)
+      .eq("coming_soon", false)
       .order("sort_order", { ascending: true })
       .then(({ data }) => {
         if (!cancelled && data) {

@@ -10,9 +10,9 @@ import { Lightbox } from "@/components/site/Lightbox";
 import { fetchPropertyBySlug, fetchPublishedProperties, type Property } from "@/lib/queries/properties";
 
 const PROPERTY_PINS: Record<string, { x: number; y: number; label: string }> = {
-  "driftwood-house": { x: 110, y: 150, label: "Shelley Point" },
-  "salt-pavilion": { x: 95, y: 175, label: "Britannia Bay" },
-  "cape-aerie": { x: 120, y: 130, label: "St Helena Bay" },
+  "sage-and-salt": { x: 110, y: 140, label: "Steenbergs Cove" },
+  "sky-and-sea": { x: 110, y: 140, label: "Steenbergs Cove" },
+  "10-seaview-close": { x: 105, y: 155, label: "Shelley Point" },
 };
 
 export const Route = createFileRoute("/properties_/$slug")({
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/properties_/$slug")({
       fetchPublishedProperties(),
     ]);
     if (!property) throw notFound();
-    const others = all.filter((p) => p.id !== property.id).slice(0, 2);
+    const others = all.filter((p) => p.id !== property.id && !p.comingSoon).slice(0, 2);
     return { property, others };
   },
   head: ({ loaderData }) => {

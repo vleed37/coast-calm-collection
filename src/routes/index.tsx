@@ -71,7 +71,7 @@ function Home() {
             <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-20 gap-6">
               <div>
                 <span className="smallcaps text-warmth">The Collection</span>
-                <h2 className="font-display text-5xl md:text-6xl mt-4 font-light">Three houses.</h2>
+                <h2 className="font-display text-5xl md:text-6xl mt-4 font-light">Four houses.</h2>
               </div>
               <Link to="/properties" className="smallcaps link-underline text-ocean">View all →</Link>
             </div>

@@ -2,6 +2,32 @@ import { Link } from "@tanstack/react-router";
 import type { Property } from "@/lib/queries/properties";
 
 export function PropertyCard({ property, offset = false }: { property: Property; offset?: boolean }) {
+  if (property.comingSoon) {
+    return (
+      <article className={`group ${offset ? "md:translate-y-20 lg:translate-y-32" : ""}`}>
+        <div className="block">
+          <div className="relative overflow-hidden bg-mist aspect-[3/4]">
+            <img
+              src={property.heroImage}
+              alt={property.name}
+              loading="lazy"
+              className="absolute inset-0 w-full h-full object-cover opacity-70"
+            />
+            <span className="absolute top-4 left-4 bg-cream/95 text-ink smallcaps px-3 py-2">
+              Coming Soon
+            </span>
+          </div>
+          <div className="pt-6 flex flex-col gap-3">
+            <span className="smallcaps text-ink/60">{property.location}</span>
+            <h3 className="font-display text-2xl md:text-3xl">{property.name}</h3>
+            <div className="pt-3 border-t border-mist mt-2">
+              <span className="smallcaps text-ink/60">New to the collection — details to follow.</span>
+            </div>
+          </div>
+        </div>
+      </article>
+    );
+  }
   return (
     <article className={`group ${offset ? "md:translate-y-20 lg:translate-y-32" : ""}`}>
       <Link to="/properties/$slug" params={{ slug: property.id }} className="block">
