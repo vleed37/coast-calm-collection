@@ -13,7 +13,7 @@ export const Route = createFileRoute("/guide")({
   errorComponent: ({ error }) => <ErrorComponent error={error} />,
   head: ({ loaderData }) =>
     buildHead({
-      title: "The Coastline, Curated — A West Coast Local Guide | [BRAND]",
+      title: "The Coastline, Curated — A West Coast Local Guide | Lone Bull Properties",
       description:
         "Where to eat, drink, walk and watch on South Africa's West Coast. A short, considered local guide from people who live here.",
       path: "/guide",

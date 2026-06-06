@@ -2,18 +2,18 @@ import type { Property } from "@/lib/queries/properties";
 
 // TODO: replace at deploy with the live custom domain
 export const SITE_URL = "https://placeholder-domain.com";
-export const SITE_NAME = "[BRAND]";
+export const SITE_NAME = "Lone Bull Properties";
 export const LOCALE = "en_ZA";
 export const ORG_DESCRIPTION =
-  "Luxury self-catering villa rentals on South Africa's West Coast. Direct bookings, three properties, hand-picked locations from Shelley Point to St Helena Bay.";
+  "Luxury self-catering holiday homes in St Helena Bay on South Africa's West Coast. Direct bookings, four properties, hand-picked locations across Shelley Point and Steenbergs Cove estates.";
 
 export const DEFAULT_OG_IMAGE =
   "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1200&h=630&q=80";
 
 export const PROPERTY_GEO: Record<string, { lat: number; lng: number }> = {
-  "driftwood-house": { lat: -32.7378, lng: 17.9967 },
-  "salt-pavilion": { lat: -32.7956, lng: 17.8836 },
-  "cape-aerie": { lat: -32.7589, lng: 18.0369 },
+  "sage-and-salt": { lat: -32.7956, lng: 17.8836 },
+  "sky-and-sea": { lat: -32.792, lng: 17.886 },
+  "10-seaview-close": { lat: -32.7378, lng: 17.9967 },
 };
 
 export type SeoInput = {
@@ -159,8 +159,8 @@ export function lodgingGraph(property: Property) {
       value: true,
     })),
     checkinTime: "14:00",
-    checkoutTime: "11:00",
-    petsAllowed: "By prior arrangement",
+    checkoutTime: "10:00",
+    petsAllowed: false,
   };
 }
 

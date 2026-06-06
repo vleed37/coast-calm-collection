@@ -5,7 +5,7 @@ import { useState, type FormEvent } from "react";
 export const Route = createFileRoute("/admin_/login")({
   head: () => ({
     meta: [
-      { title: "Admin Sign In | [BRAND]" },
+      { title: "Admin Sign In | Lone Bull Properties" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
