@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import React, { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { adminData } from "@/lib/admin-client";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -25,17 +25,22 @@ function Enquiries() {
   const [open, setOpen] = useState<Record<string, boolean>>({});
 
   const load = async () => {
-    const { data, error } = await supabase.from("enquiries").select("*").order("created_at", { ascending: false });
-    if (error) { toast.error(error.message); return; }
-    setRows(data as Row[]);
+    try {
+      const data = await adminData<Row[]>({
+        table: "enquiries", op: "list",
+        order: { column: "created_at", ascending: false },
+      });
+      setRows(data);
+    } catch (e) { toast.error((e as Error).message); }
   };
   useEffect(() => { load(); }, []);
 
   const updateStatus = async (id: string, status: string) => {
-    const { error } = await supabase.from("enquiries").update({ status }).eq("id", id);
-    if (error) { toast.error(error.message); return; }
-    setRows((rs) => rs?.map((r) => r.id === id ? { ...r, status } : r) ?? null);
-    toast.success("Updated");
+    try {
+      await adminData({ table: "enquiries", op: "update", id, payload: { status } });
+      setRows((rs) => rs?.map((r) => r.id === id ? { ...r, status } : r) ?? null);
+      toast.success("Updated");
+    } catch (e) { toast.error((e as Error).message); }
   };
 
   const exportCsv = () => {

@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
+import { adminToken } from "@/lib/admin-client";
 import { AdminShell } from "@/components/admin/AdminShell";
 
 export const Route = createFileRoute("/admin")({
@@ -11,10 +11,9 @@ export const Route = createFileRoute("/admin")({
   }),
   beforeLoad: async () => {
     if (typeof window === "undefined") return;
-    const { data } = await supabase.auth.getSession();
-    if (!data.session) {
-      throw redirect({ to: "/admin/login" });
-    }
+    if (!adminToken.get()) throw redirect({ to: "/admin/login" });
+    // Token validity is enforced server-side on every admin call;
+    // if it's expired, edge functions return 401 and the UI shows the error.
   },
   component: AdminShell,
 });

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
+import { adminData } from "@/lib/admin-client";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -78,8 +78,10 @@ export function PropertyForm({ id }: { id?: string }) {
   useEffect(() => {
     if (!id) return;
     (async () => {
-      const { data, error } = await supabase.from("properties").select("*").eq("id", id).single();
-      if (error || !data) { toast.error("Could not load property"); return; }
+      let data: any;
+      try {
+        data = await adminData<any>({ table: "properties", op: "select", id });
+      } catch { toast.error("Could not load property"); return; }
       form.reset({
         name: data.name, slug: data.slug, location: data.location,
         description: data.description, pull_quote: data.pull_quote ?? "",
@@ -89,8 +91,8 @@ export function PropertyForm({ id }: { id?: string }) {
         min_stay: data.min_stay, from_price: data.from_price,
         setting_copy: data.setting_copy, setting_image: data.setting_image ?? "",
         hero_image: data.hero_image,
-        gallery: (data.gallery ?? []).map((url) => ({ url })),
-        features: (data.features ?? []).map((value) => ({ value })),
+        gallery: (data.gallery ?? []).map((url: string) => ({ url })),
+        features: (data.features ?? []).map((value: string) => ({ value })),
         vignettes: Array.isArray(data.experience_vignettes)
           ? (data.experience_vignettes as Array<{ title: string; body: string }>)
           : [],
@@ -122,21 +124,23 @@ export function PropertyForm({ id }: { id?: string }) {
       seo_keywords: v.seo_keywords || null,
       seo_og_image: v.seo_og_image || null,
     };
-    const res = id
-      ? await supabase.from("properties").update(payload).eq("id", id)
-      : await supabase.from("properties").insert(payload);
-    setSaving(false);
-    if (res.error) { toast.error(res.error.message); return; }
-    toast.success(id ? "Saved" : "Created");
-    navigate({ to: "/admin/properties" });
+    try {
+      if (id) await adminData({ table: "properties", op: "update", id, payload });
+      else await adminData({ table: "properties", op: "insert", payload });
+      toast.success(id ? "Saved" : "Created");
+      navigate({ to: "/admin/properties" });
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally { setSaving(false); }
   };
 
   const onDelete = async () => {
     if (!id) return;
-    const { error } = await supabase.from("properties").delete().eq("id", id);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Deleted");
-    navigate({ to: "/admin/properties" });
+    try {
+      await adminData({ table: "properties", op: "delete", id });
+      toast.success("Deleted");
+      navigate({ to: "/admin/properties" });
+    } catch (e) { toast.error((e as Error).message); }
   };
 
   if (loading) return <p className="text-ink/60">Loading…</p>;

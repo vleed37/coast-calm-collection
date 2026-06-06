@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
+import { adminAuth } from "@/lib/admin-client";
 import { useState, type FormEvent } from "react";
 
 export const Route = createFileRoute("/admin_/login")({
@@ -14,7 +14,6 @@ export const Route = createFileRoute("/admin_/login")({
 
 function AdminLogin() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -23,13 +22,14 @@ function AdminLogin() {
     e.preventDefault();
     setError(null);
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) {
-      setError(error.message);
-      return;
+    try {
+      await adminAuth.login(password);
+      navigate({ to: "/admin" });
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setLoading(false);
     }
-    navigate({ to: "/admin" });
   };
 
   return (
@@ -38,17 +38,6 @@ function AdminLogin() {
         <span className="smallcaps text-warmth">Private</span>
         <h1 className="font-display text-5xl md:text-6xl font-light mt-4 leading-[0.95]">Admin.</h1>
         <form onSubmit={onSubmit} className="mt-12 flex flex-col gap-8">
-          <label className="flex flex-col gap-2">
-            <span className="smallcaps text-ink/60">Email</span>
-            <input
-              type="email"
-              required
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="bg-transparent border-b border-mist focus:border-ocean focus:outline-none py-2 text-ink"
-            />
-          </label>
           <label className="flex flex-col gap-2">
             <span className="smallcaps text-ink/60">Password</span>
             <input

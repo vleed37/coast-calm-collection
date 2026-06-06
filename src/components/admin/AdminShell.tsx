@@ -1,5 +1,5 @@
 import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
+import { adminAuth } from "@/lib/admin-client";
 import { LogOut, Home, Building2, BookOpen, Mail } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -14,8 +14,8 @@ export function AdminShell() {
   const navigate = useNavigate();
   const path = useRouterState({ select: (s) => s.location.pathname });
 
-  const signOut = async () => {
-    await supabase.auth.signOut();
+  const signOut = () => {
+    adminAuth.logout();
     navigate({ to: "/admin/login" });
   };
 
