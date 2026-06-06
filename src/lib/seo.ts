@@ -1,7 +1,6 @@
 import type { Property } from "@/lib/queries/properties";
 
-// TODO: replace at deploy with the live custom domain
-export const SITE_URL = "https://placeholder-domain.com";
+export const SITE_URL = "https://lonebullrentals.co.za";
 export const SITE_NAME = "Lone Bull Properties";
 export const LOCALE = "en_ZA";
 export const ORG_DESCRIPTION =

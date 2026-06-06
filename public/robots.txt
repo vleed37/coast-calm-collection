@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://placeholder-domain.com/sitemap.xml
+Sitemap: https://lonebullrentals.co.za/sitemap.xml
