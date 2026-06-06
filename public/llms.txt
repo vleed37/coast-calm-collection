@@ -1,0 +1,14 @@
+# Lone Bull Properties
+
+> A small collection of luxury self-catering villas on South Africa's West Coast — Shelley Point, Britannia Bay, and St Helena Bay. Direct booking enquiries with no platform fees.
+
+Lone Bull Properties offers a curated selection of holiday homes on the West Coast of South Africa. Each property is available for short-term rental for a few weeks each year. The site includes a local guide to the area's best places to eat, drink, walk, and watch.
+
+## Pages
+
+- [Home](/): Overview of the villa collection and direct booking philosophy.
+- [The Collection](/properties): Browse all available West Coast holiday homes, with details on beds, baths, guests, and pricing.
+- [Property Details](/properties/sage-and-salt): Individual villa pages with full descriptions, photo galleries, amenities, and booking enquiries.
+- [The Coastline, Curated](/guide): A local guide to the West Coast — where to eat, drink, walk, and watch.
+- [Booking Policy](/booking-policy): Cancellation terms, house rules, and what to expect.
+- [Contact](/contact): Send an enquiry or get in touch about a stay.
