@@ -26,20 +26,20 @@ export function Nav({ transparentOverHero = false }: { transparentOverHero?: boo
         solid ? "bg-cream border-b border-mist" : "bg-transparent"
       }`}
     >
-      <div className="max-w-[1320px] mx-auto px-6 md:px-12 py-5 md:py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-8">
+      <div className="max-w-[1320px] mx-auto px-6 md:px-8 lg:px-10 py-5 md:py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6 lg:gap-8">
         <Link
           to="/"
-          className={`font-display text-3xl md:text-4xl lg:text-5xl tracking-[0.22em] font-light text-center md:text-left ${textColor}`}
+          className={`font-display text-2xl md:text-3xl lg:text-4xl tracking-[0.18em] font-light text-center md:text-left whitespace-nowrap ${textColor}`}
         >
           Lone Bull Rentals
         </Link>
-        <nav className={`flex flex-wrap justify-center gap-x-7 gap-y-2 md:flex-1 md:justify-center ${textColor}`}>
+        <nav className={`flex flex-wrap md:flex-nowrap md:whitespace-nowrap justify-center gap-x-5 lg:gap-x-6 gap-y-2 md:justify-center ${textColor}`}>
           {links.map((l) => (
             <Link
               key={l.to}
               to={l.to}
-              className="smallcaps link-underline text-[0.78rem] md:text-[0.85rem]"
-              activeProps={{ className: "smallcaps link-underline text-warmth text-[0.78rem] md:text-[0.85rem]" }}
+              className="smallcaps link-underline text-[0.78rem] md:text-[0.8rem] tracking-[0.14em]"
+              activeProps={{ className: "smallcaps link-underline text-warmth text-[0.78rem] md:text-[0.8rem] tracking-[0.14em]" }}
               activeOptions={{ exact: true }}
             >
               {l.label}
