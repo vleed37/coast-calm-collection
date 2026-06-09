@@ -45,10 +45,10 @@ function PropertiesPage() {
       </section>
 
       <section className="px-6 md:px-12 pb-40">
-        <div className="max-w-[1320px] mx-auto grid md:grid-cols-2 gap-x-12 gap-y-20 md:pb-40">
+        <div className="max-w-[1320px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-12 items-stretch md:pb-40">
           {properties.map((p, i) => (
-            <Reveal key={p.id} delay={i * 100}>
-              <PropertyCard property={p} offset={i % 2 === 1} />
+            <Reveal key={p.id} delay={i * 100} className="h-full">
+              <PropertyCard property={p} />
             </Reveal>
           ))}
         </div>

@@ -1,52 +1,67 @@
 # Plan
 
-## A. Brand rename — "Lone Bull Properties" → "Lone Bull Rentals"
+## A. Prices — "From R1,500 / night"
 
-Replace every occurrence (verbatim, case-preserving) across:
+- Migration updating `properties.from_price` to `R1,500` for the three live homes
+  (Sage & Salt, Sky & Sea, 10 Seaview Close). 37 Wanoo Drive stays as-is.
+- Update `PropertyCard.tsx` so the price line renders `From {fromPrice} / night`
+  (currently just `From {fromPrice}`). Detail page (`properties_.$slug.tsx`)
+  already shows `From {fromPrice} per night` — I'll align it to the same
+  `/ night` wording so the brand reads consistently across card and detail.
 
-- `src/components/site/Nav.tsx` — header wordmark
-- `src/components/site/Footer.tsx` — footer wordmark + © line
-- `src/components/admin/AdminShell.tsx`, `src/routes/admin.tsx`, `src/routes/admin_.login.tsx`
-- `src/lib/seo.ts` — `SITE_NAME` constant (drives `og:site_name`, JSON-LD `LodgingBusiness.name`, `WebSite.name`)
-- Every route `head()` title that includes the brand: `src/routes/index.tsx`, `properties.tsx`, `properties_.$slug.tsx`, `guide.tsx`, `contact.tsx`, `booking-policy.tsx`
-- `public/llms.txt` — heading + body references
+Storing the bare number (`R1,500`) instead of the full phrase keeps JSON-LD's
+`priceRange: "From R1,500 per night"` clean and avoids "/ night per night"
+duplication in structured data.
 
-Canonical domain (`SITE_URL = https://lonebullrentals.co.za`) is already correct — no change.
+## B. 37 Wanoo Drive cover image
 
-Tagline "Made on the West Coast." stays.
+- Upload `/mnt/user-uploads/10409_COVER.jpeg` via `lovable-assets create`
+  → `src/assets/wanoo-cover.jpg.asset.json`.
+- Migration updating `properties.hero_image` for `37-wanoo-drive` to the CDN
+  `url` from that pointer file.
 
-## B. Home hero
+(Two migrations combined into one — single approval.)
 
-- Add the uploaded photo as a Lovable Asset (`src/assets/hero-coast.jpg.asset.json` via `lovable-assets create` from `/mnt/user-uploads/HOME_PAGE_-_COVER_PHOTO.jpg`), import in `src/routes/index.tsx`, use as the hero `<img src>` (replacing the Unsplash villa shot). Also update the `<link rel="preload">` / `og:image` for `/` to this asset URL so the LCP image preloads correctly.
-- Hero copy: the current headline is "Luxury West Coast / Villa Rentals." Per your instruction, set it to **"Where the coastline pauses."** with the existing sub-line kept ("A small collection of homes on the West Coast."). Flag: your message says "keep existing exactly" but the live copy is different — I'll set it to "Where the coastline pauses." since that's the wording you quoted. Tell me if you'd rather leave the current headline untouched.
-- Wordmark size in `Nav.tsx`: bump from `text-2xl tracking-[0.3em]` to roughly `text-3xl md:text-4xl tracking-[0.25em]` so it reads as the clear focal point.
+## C. Properties grid — symmetrical & aligned
 
-## C. Header
+Rework `src/routes/properties.tsx` and `src/components/site/PropertyCard.tsx`:
 
-- Add an **Enquire Now** button to the right side of the nav bar in `Nav.tsx`. Styling: solid `bg-ocean text-cream` on the scrolled/solid state, outlined `border-cream/60 text-cream` on the transparent-over-hero state, `smallcaps` tracking — matches the existing Enquire buttons on the home CTA and property pages. Links to `/contact` via TanStack `<Link>`.
-- Nav links: bump from default (`text-sm` smallcaps) to `text-[0.8rem] md:text-[0.85rem]` — a small, deliberate increase.
-- Layout shifts from centered stack to: wordmark left, nav center, Enquire button right (still wraps cleanly on mobile).
+**Grid (`properties.tsx`):**
+- Replace the current `grid md:grid-cols-2 gap-x-12 gap-y-20` + per-card
+  `translate-y-20/32` stagger with a clean equal-height grid:
+  `grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-12 items-start`.
+- Drop the `offset={i % 2 === 1}` prop entirely so every card sits at the
+  same baseline.
+- Cards become full-bleed within their column; no negative margins.
 
-## D. Home: remove properties grid, add Activities teaser
+**Card (`PropertyCard.tsx`):**
+- Remove the `offset` prop and translate-y classes.
+- Wrap each card in a `flex flex-col h-full` container so equal-height rows
+  align price/CTA at the bottom (`mt-auto` on the footer block).
+- Image: change from `aspect-[3/4]` (tall, crops landscape photos) to a
+  consistent landscape `aspect-[4/3]` with `object-cover` and
+  `object-[center_60%]` framing. All four property hero photos are landscape,
+  so 4:3 + cover shows the building/horizon without cutting the roofline or
+  pool the way 3:4 does today. Image dimensions are now identical card-to-card.
+  - I'm choosing `object-cover` (not `object-contain`) because contain would
+    letterbox each photo at a different inset and break the "aligned, equal"
+    look the client is asking for. 4:3 is the closest aspect to the actual
+    photos, so cover crops are minimal. If the client still feels a specific
+    photo loses something important, the fix is to swap that hero photo (or
+    re-crop the source) rather than letterbox the whole grid. Flag if you'd
+    prefer contain.
+- Card body: location → name → beds/baths/guests stats → divider → price +
+  "View Property →" — all visible above the fold within the card, regardless
+  of column.
+- Coming-soon variant gets the same shape (4:3, h-full, same body padding)
+  so 37 Wanoo Drive aligns with the live homes.
 
-In `src/routes/index.tsx`:
-
-- Remove the entire `FEATURED` section (the "The Collection / Four houses." block with `<PropertyCard>` grid and "View all →" link). Also drop the now-unused `fetchPublishedProperties` loader, `PropertyCard` import, and `Route.useLoaderData()` call.
-- Insert a new **Activities** section in its place, mirroring the existing "Beyond the front door / Local Guide" two-column teaser but mirrored: **image on the right, text on the left**.
-  - Kicker: `Things to Do`
-  - Heading: *"The coast, in motion."* (display italic, matches existing tone)
-  - Body: ~2 short sentences covering beaches, kayaking, horse riding, golf and local restaurants — kept brief and elegant.
-  - CTA: smallcaps link "Explore the Guide →" to `/guide` (button-styled to match the existing CTA aesthetic — bordered link or `bg-ocean` button, consistent with the page CTA at the bottom).
-  - Image: a West Coast coastal/beach placeholder from Unsplash (same source pattern already used elsewhere). Easy to swap later.
-
-## Out of scope (unchanged)
-
-- The Properties page itself, property data, JSON-LD for properties.
-- Existing fonts, palette (`cream`, `ocean`, `warmth`, `ink`, `mist`), `Footer`, all other route content.
+**Home page**
+- The home page no longer renders `PropertyCard` (removed last turn), so
+  card changes only affect `/properties`.
 
 ## Verification
 
-After build, I'll confirm:
-1. Every changed file's brand string.
-2. Home page no longer renders any `PropertyCard` (and no leftover loader).
-3. Hero uses the new asset; nav shows the Enquire button.
+- Confirm in preview at desktop that the two rows line up evenly, full image
+  visible (no roofline/pool clipping), price + CTA bottom-aligned.
+- Confirm DB shows the new prices and the new 37 Wanoo Drive image URL.
