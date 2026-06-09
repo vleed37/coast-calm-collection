@@ -30,7 +30,7 @@ export const Route = createFileRoute("/properties_/$slug")({
     const p = loaderData.property;
     const longText = [p.description, ...p.story].join(" ");
     return buildHead({
-      title: p.seoTitle || `${p.name} — Luxury Villa in ${p.location} | Lone Bull Properties`,
+      title: p.seoTitle || `${p.name} — Luxury Villa in ${p.location} | Lone Bull Rentals`,
       description: p.seoDescription || truncateDescription(longText, 155),
       path: `/properties/${p.id}`,
       image: p.seoOgImage || p.heroImage,

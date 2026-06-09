@@ -1,7 +1,7 @@
 import type { Property } from "@/lib/queries/properties";
 
 export const SITE_URL = "https://lonebullrentals.co.za";
-export const SITE_NAME = "Lone Bull Properties";
+export const SITE_NAME = "Lone Bull Rentals";
 export const LOCALE = "en_ZA";
 export const ORG_DESCRIPTION =
   "Luxury self-catering holiday homes in St Helena Bay on South Africa's West Coast. Direct bookings, four properties, hand-picked locations across Shelley Point and Steenbergs Cove estates.";

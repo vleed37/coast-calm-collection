@@ -12,7 +12,7 @@ export const Route = createFileRoute("/")({
   errorComponent: ({ error }) => <ErrorComponent error={error} />,
   head: () =>
     buildHead({
-      title: "Luxury West Coast Villa Rentals | Lone Bull Properties",
+      title: "Luxury West Coast Villa Rentals | Lone Bull Rentals",
       description:
         "A small collection of self-catering villas on South Africa's West Coast. Direct booking enquiries — no platform fees.",
       keywords:
