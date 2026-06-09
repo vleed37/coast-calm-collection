@@ -1,80 +1,52 @@
+# Plan
 
-## 1. Shared property type + fetcher
+## A. Brand rename — "Lone Bull Properties" → "Lone Bull Rentals"
 
-Create `src/lib/queries/properties.ts` exporting:
-- A `Property` type matching the DB shape (camelCase mapped from snake_case, plus `extras` derived from `experience_vignettes` jsonb, `setting_copy`, `setting_image`, `seo_*`).
-- `fetchPublishedProperties()` — `supabase.from('properties').select('*').eq('is_published', true).order('sort_order')` then maps rows to the `Property` type.
-- `fetchPropertyBySlug(slug)` — single row by slug, returns null if not found.
+Replace every occurrence (verbatim, case-preserving) across:
 
-Create `src/lib/queries/guide.ts` with `fetchPublishedArticles()` — same pattern against `guide_articles`, ordered by `sort_order`.
+- `src/components/site/Nav.tsx` — header wordmark
+- `src/components/site/Footer.tsx` — footer wordmark + © line
+- `src/components/admin/AdminShell.tsx`, `src/routes/admin.tsx`, `src/routes/admin_.login.tsx`
+- `src/lib/seo.ts` — `SITE_NAME` constant (drives `og:site_name`, JSON-LD `LodgingBusiness.name`, `WebSite.name`)
+- Every route `head()` title that includes the brand: `src/routes/index.tsx`, `properties.tsx`, `properties_.$slug.tsx`, `guide.tsx`, `contact.tsx`, `booking-policy.tsx`
+- `public/llms.txt` — heading + body references
 
-Both modules import the browser `supabase` client (read-only public selects, RLS already permits anon SELECT where `is_published = true`). No server functions needed for public reads.
+Canonical domain (`SITE_URL = https://lonebullrentals.co.za`) is already correct — no change.
 
-## 2. Update PropertyCard + EnquiryForm to the new type
+Tagline "Made on the West Coast." stays.
 
-- `src/components/site/PropertyCard.tsx`: import the new `Property` type from `@/lib/queries/properties`. No render changes (same fields: name, location, beds, baths, guests, fromPrice, heroImage, slug).
-- `src/components/site/EnquiryForm.tsx`: replace the `properties` import with a small inline fetch on mount (`useEffect` + `supabase.from('properties').select('id, slug, name').eq('is_published', true).order('sort_order')`), populate the select from state. Default empty list during fetch.
+## B. Home hero
 
-## 3. Rewire route loaders
+- Add the uploaded photo as a Lovable Asset (`src/assets/hero-coast.jpg.asset.json` via `lovable-assets create` from `/mnt/user-uploads/HOME_PAGE_-_COVER_PHOTO.jpg`), import in `src/routes/index.tsx`, use as the hero `<img src>` (replacing the Unsplash villa shot). Also update the `<link rel="preload">` / `og:image` for `/` to this asset URL so the LCP image preloads correctly.
+- Hero copy: the current headline is "Luxury West Coast / Villa Rentals." Per your instruction, set it to **"Where the coastline pauses."** with the existing sub-line kept ("A small collection of homes on the West Coast."). Flag: your message says "keep existing exactly" but the live copy is different — I'll set it to "Where the coastline pauses." since that's the wording you quoted. Tell me if you'd rather leave the current headline untouched.
+- Wordmark size in `Nav.tsx`: bump from `text-2xl tracking-[0.3em]` to roughly `text-3xl md:text-4xl tracking-[0.25em]` so it reads as the clear focal point.
 
-- `src/routes/index.tsx`: add `loader: () => fetchPublishedProperties()`, render `Route.useLoaderData()` in the featured grid. Add `errorComponent` + `notFoundComponent`.
-- `src/routes/properties.tsx`: add `loader: () => fetchPublishedProperties()`. Add boundaries.
-- `src/routes/properties_.$slug.tsx`:
-  - `loader: async ({ params }) => { const p = await fetchPropertyBySlug(params.slug); if (!p) throw notFound(); return { property: p }; }`
-  - Inside the component, fetch siblings via a small client query (or include in loader as `{ property, others }` — preferred: extend loader to also fetch all properties once and slice).
-  - Extras (bandQuote, setting heading/paragraphs, experience vignettes, pin) now come from the property row: `pull_quote` → bandQuote fallback; `setting_copy` parsed as paragraphs (split on blank lines) with heading "Where you'll be."; `experience_vignettes` jsonb → vignette array; `pin` derived from a small `PROPERTY_PINS` constant kept in the file (non-content layout data) keyed by slug, falling back to a default coordinate.
-  - SEO override in `head()`:
-    ```
-    title: p.seo_title || `${p.name} — Luxury Villa in ${p.location} | [BRAND]`
-    description: p.seo_description || truncateDescription([p.description, ...p.long_copy].join(' '), 155)
-    keywords: p.seo_keywords || `${p.location} villa, ...`
-    image: p.seo_og_image || p.hero_image
-    ```
-- `src/routes/guide.tsx`: add `loader: () => fetchPublishedArticles()`. Render from loader data instead of the hardcoded `articles` array. Filter buttons keep existing `filters` constant.
+## C. Header
 
-`src/lib/seo.ts`: change `lodgingGraph` to accept the new `Property` shape (rename `heroImage`→`hero_image` access, `fromPrice`→`from_price` etc., or keep camelCase consistently in the Property type — preferred: keep camelCase mapping in fetcher so seo helpers stay unchanged).
+- Add an **Enquire Now** button to the right side of the nav bar in `Nav.tsx`. Styling: solid `bg-ocean text-cream` on the scrolled/solid state, outlined `border-cream/60 text-cream` on the transparent-over-hero state, `smallcaps` tracking — matches the existing Enquire buttons on the home CTA and property pages. Links to `/contact` via TanStack `<Link>`.
+- Nav links: bump from default (`text-sm` smallcaps) to `text-[0.8rem] md:text-[0.85rem]` — a small, deliberate increase.
+- Layout shifts from centered stack to: wordmark left, nav center, Enquire button right (still wraps cleanly on mobile).
 
-## 4. Backup the hardcoded data files
+## D. Home: remove properties grid, add Activities teaser
 
-- Rename `src/data/properties.ts` → `src/data/properties.ts.bak`.
-- The hardcoded guide article array lives inline in `src/routes/guide.tsx` — extract it to `src/data/guide.ts.bak` for backup.
-- Verify no remaining imports from `@/data/properties` (PropertyCard, EnquiryForm, EnquirySheet, seo.ts, all routes already covered above).
+In `src/routes/index.tsx`:
 
-## 5. Enquiry submission + email notification
+- Remove the entire `FEATURED` section (the "The Collection / Four houses." block with `<PropertyCard>` grid and "View all →" link). Also drop the now-unused `fetchPublishedProperties` loader, `PropertyCard` import, and `Route.useLoaderData()` call.
+- Insert a new **Activities** section in its place, mirroring the existing "Beyond the front door / Local Guide" two-column teaser but mirrored: **image on the right, text on the left**.
+  - Kicker: `Things to Do`
+  - Heading: *"The coast, in motion."* (display italic, matches existing tone)
+  - Body: ~2 short sentences covering beaches, kayaking, horse riding, golf and local restaurants — kept brief and elegant.
+  - CTA: smallcaps link "Explore the Guide →" to `/guide` (button-styled to match the existing CTA aesthetic — bordered link or `bg-ocean` button, consistent with the page CTA at the bottom).
+  - Image: a West Coast coastal/beach placeholder from Unsplash (same source pattern already used elsewhere). Easy to swap later.
 
-### Client submission
-Update `EnquiryForm.tsx`:
-- Replace the `onSubmit` handler with: collect fields (name, email, phone, property, checkin, checkout, message), call `supabase.from('enquiries').insert({...})`.
-- After successful insert, call `supabase.functions.invoke('notify-enquiry', { body: enquiryRow })` (fire-and-forget; don't block the success toast on email).
-- Show sonner toast on success ("Enquiry sent — we'll reply within a day.") and call `onSubmitted?.()`.
-- On error, sonner error toast: "Couldn't send right now. Please try again."
-- Add zod validation (name 1-200, email valid, message ≤ 5000) matching the RLS check expression to avoid silent rejections.
+## Out of scope (unchanged)
 
-### Email — Supabase Edge Function `notify-enquiry`
-Create `supabase/functions/notify-enquiry/index.ts`:
-- Reads enquiry payload from request body.
-- Sends email via the Lovable AI Gateway is not applicable; use Resend if `RESEND_API_KEY` is present, otherwise log only.
-- Recommended: use the Lovable Email infrastructure (transactional emails) — but that requires an email domain setup. Since the user said "use Supabase's built-in SMTP for now; can be swapped to Resend or SendGrid later", we'll proceed with: **scaffold Lovable Email transactional** (no third-party API key required, uses `notify.<domain>` subdomain).
-- This means: call `email_domain--check_email_domain_status`. If no domain configured, prompt the user via the email setup dialog before completing email wiring. The DB insert + toast still works without email.
+- The Properties page itself, property data, JSON-LD for properties.
+- Existing fonts, palette (`cream`, `ocean`, `warmth`, `ink`, `mist`), `Footer`, all other route content.
 
-Function set to `verify_jwt = false` in `supabase/config.toml` so it can be called from the public form.
+## Verification
 
-To: Linda's address. **We need her email** — add a `LINDA_NOTIFY_EMAIL` Supabase secret (will prompt user during implementation). Subject `New enquiry from {name}`; body lists all fields as plain text.
-
-### Webhook vs invoke
-We'll invoke directly from the client after a successful insert (simpler than wiring a DB webhook; same outcome and no extra Supabase config). The function does its own minimal validation.
-
-## 6. Verification checklist
-
-- Home, /properties, /properties/$slug all hydrate from Supabase (toggle `is_published` in admin → row disappears on refresh).
-- Editing a property in admin and refreshing public page reflects changes.
-- Slug not found renders existing `notFoundComponent`.
-- /guide hydrates from `guide_articles`.
-- /contact and EnquirySheet insert a row in `enquiries` and trigger `notify-enquiry`; toast feedback on success/error.
-- SEO `<title>`, meta description, keywords, og:image on a property page reflect admin override fields when set.
-- `src/data/properties.ts.bak` exists; no code imports from the .bak file.
-
-## Open question (will ask during implementation)
-
-- Linda's notification email address (stored as `LINDA_NOTIFY_EMAIL` secret).
-- Lovable Email domain — if not yet configured, user will be prompted via the email setup dialog when the edge function is wired.
+After build, I'll confirm:
+1. Every changed file's brand string.
+2. Home page no longer renders any `PropertyCard` (and no leftover loader).
+3. Hero uses the new asset; nav shows the Enquire button.
