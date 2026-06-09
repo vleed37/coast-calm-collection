@@ -70,12 +70,43 @@ function PropertyPage() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Location: "Estate name, Town" → render on two lines
+  const [locLine1, locLine2] = (() => {
+    const idx = property.location.indexOf(",");
+    if (idx === -1) return [property.location, ""];
+    return [property.location.slice(0, idx).trim() + ",", property.location.slice(idx + 1).trim()];
+  })();
+
+  // Rooms tab: derive bedroom/bathroom and kitchen items from features
+  const roomFeatures = property.features.filter((f) => /bed|bath|linen|sleep|sheet|towel/i.test(f));
+  const kitchenFeatures = property.features.filter((f) => /kitchen|cook|oven|fridge|coffee|appliance|dishwash/i.test(f));
+
+  type TabKey = "overview" | "rooms" | "details" | "location" | "gallery";
+  const TABS: { key: TabKey; label: string }[] = [
+    { key: "overview", label: "Overview" },
+    { key: "rooms", label: "Rooms" },
+    { key: "details", label: "Details" },
+    { key: "location", label: "Location" },
+    { key: "gallery", label: "Gallery" },
+  ];
+  const [tab, setTab] = useState<TabKey>("overview");
+  const onTab = (k: TabKey) => {
+    setTab(k);
+    if (typeof window !== "undefined") {
+      const el = document.getElementById("masthead");
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.scrollY - 16;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
+    }
+  };
+
   return (
     <div className="page-fade bg-cream">
       <Nav transparentOverHero />
 
       {/* 1. Cinematic hero */}
-      <section className="relative h-[90vh] w-full overflow-hidden">
+      <section className="relative h-[72vh] w-full overflow-hidden">
         <img
           src={property.heroImage}
           alt={`${property.name} — luxury self-catering villa in ${property.location}, South African West Coast`}
@@ -89,202 +120,257 @@ function PropertyPage() {
         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-b from-transparent to-ink/30" />
       </section>
 
-      {/* 2. Masthead */}
-      <section className="px-6 md:px-12 py-20 max-w-[1320px] mx-auto">
+      {/* 2. Masthead — name, location, specs, gold line, tabs */}
+      <section id="masthead" className="px-6 md:px-12 pt-14 md:pt-16 pb-0 max-w-[1320px] mx-auto">
         <Reveal>
-          <div className="grid md:grid-cols-12 gap-6 items-end pb-10 border-b border-mist">
-            <div className="md:col-span-3">
-              <span className="smallcaps text-warmth">{property.location}</span>
-            </div>
-            <h1 className="md:col-span-6 font-display text-5xl md:text-7xl text-center font-light leading-[1]">
+          <div className="flex flex-col items-center text-center gap-5">
+            <h1 className="font-display text-5xl md:text-7xl font-light leading-[1]">
               {property.name}
             </h1>
-            <div className="md:col-span-3 md:text-right flex flex-col md:items-end">
-              <span className="font-display text-2xl text-ink">From {property.fromPrice}</span>
-              <span className="smallcaps text-ink/60 mt-1">/ night</span>
+            <div className="smallcaps text-warmth leading-[1.7]">
+              <div>{locLine1}</div>
+              {locLine2 && <div>{locLine2}</div>}
+            </div>
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 smallcaps text-ink/70">
+              <span>{property.beds} Beds</span>
+              <span className="text-warmth">·</span>
+              <span>{property.baths} Baths</span>
+              <span className="text-warmth">·</span>
+              <span>{property.guests} Guests</span>
+              <span className="text-warmth">·</span>
+              <span>From {property.fromPrice} / night</span>
             </div>
           </div>
-          <div className="pt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 smallcaps text-ink/70">
-            <span>{property.beds} Beds</span>
-            <span className="text-warmth">·</span>
-            <span>{property.baths} Baths</span>
-            <span className="text-warmth">·</span>
-            <span>{property.guests} Guests</span>
-            <span className="text-warmth">·</span>
-            <span>{property.minStay} min</span>
-          </div>
-        </Reveal>
-      </section>
-
-      {/* 3. The Villa */}
-      <section className="px-6 md:px-12 py-24 md:py-32">
-        <div className="max-w-5xl mx-auto">
-          <Reveal>
-            <div className="text-center mb-14">
-              <span className="smallcaps text-warmth">The Villa</span>
-            </div>
-            <div className="grid md:grid-cols-2 gap-12 md:gap-16">
-              <p className="text-lg leading-[1.8] text-ink/85">{property.story[0]}</p>
-              <p className="text-lg leading-[1.8] text-ink/85">{property.story[1]}</p>
-            </div>
-            <blockquote className="font-display italic text-3xl md:text-4xl text-ocean text-center max-w-2xl mx-auto py-20 leading-[1.3]">
-              "{property.pullQuote}"
-            </blockquote>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* 4. Gallery masonry */}
-      <section className="px-6 md:px-12 py-24">
-        <div className="max-w-[1320px] mx-auto">
-          <Reveal>
-            <div className="columns-1 md:columns-2 lg:columns-3 gap-4 md:gap-6 [column-fill:_balance]">
-              {property.gallery.map((src: string, i: number) => (
-                <Lightbox
-                  key={i}
-                  images={property.gallery}
-                  startIndex={i}
-                  trigger={
-                    <div className="mb-4 md:mb-6 break-inside-avoid overflow-hidden bg-mist cursor-zoom-in">
-                      <img
-                        src={src}
-                        alt=""
-                        loading="lazy"
-                        className={`w-full object-cover transition-all duration-700 hover:scale-[1.03] ${
-                          i % 3 === 0 ? "aspect-[3/4]" : i % 3 === 1 ? "aspect-[4/3]" : "aspect-square"
-                        }`}
-                      />
-                    </div>
-                  }
-                />
-              ))}
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* 5. Editorial pull quote band */}
-      <section className="py-32 md:py-40 px-6 bg-mist/40">
-        <Reveal>
-          <p className="font-display italic text-4xl md:text-5xl text-ink text-center max-w-3xl mx-auto leading-[1.3]">
-            "{property.pullQuote}"
-          </p>
-        </Reveal>
-      </section>
-
-      {/* 6. The Setting */}
-      <section className="grid md:grid-cols-2">
-        <div className="relative aspect-[4/5] md:aspect-auto bg-mist overflow-hidden">
-          <img
-            src={property.settingImage || property.gallery[2]}
-            alt=""
-            loading="lazy"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        </div>
-        <div className="bg-cream py-20 md:py-24 px-8 md:px-16 flex items-center">
-          <Reveal>
-            <span className="smallcaps text-warmth">The Setting</span>
-            <h2 className="font-display text-4xl md:text-5xl font-light mt-5 leading-[1.05]">
-              Where you'll be.
-            </h2>
-            <div className="mt-8 space-y-5 text-ink/80 leading-[1.8]">
-              {settingParagraphs.map((p, i) => (
-                <p key={i}>{p}</p>
-              ))}
-            </div>
-            <Link to="/guide" className="inline-block mt-10 smallcaps text-ocean link-underline">
-              Explore the guide →
-            </Link>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* 7. The Experience */}
-      <section className="px-6 py-32 max-w-4xl mx-auto text-center">
-        <Reveal>
-          <span className="smallcaps text-warmth">The Experience</span>
-          <div className="mt-16 flex flex-col">
-            {property.experienceVignettes.map((v, i) => (
-              <div key={v.title} className={`py-8 ${i > 0 ? "border-t border-mist" : ""}`}>
-                <h3 className="font-display text-3xl md:text-4xl font-light">{v.title}</h3>
-                <p className="mt-4 text-ink/80 max-w-xl mx-auto leading-[1.8]">{v.body}</p>
-              </div>
-            ))}
-          </div>
-        </Reveal>
-      </section>
-
-      {/* 8. Features */}
-      <section className="px-6 md:px-12 py-24">
-        <div className="max-w-5xl mx-auto text-center">
-          <Reveal>
-            <span className="smallcaps text-warmth">The Details</span>
-            <h2 className="font-display text-4xl md:text-5xl font-light mt-5">Everything in place.</h2>
-            <ul className="grid sm:grid-cols-2 gap-x-16 mt-14 text-left">
-              {property.features.map((f: string) => (
-                <li key={f} className="flex items-start gap-5 py-4 border-b border-mist text-ink/85">
-                  <span className="text-warmth font-light text-xl leading-none mt-1">+</span>
-                  <span>{f}</span>
-                </li>
-              ))}
-            </ul>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* 9. Booking */}
-      <section className="px-6 py-24">
-        <div className="max-w-3xl mx-auto text-center">
-          <Reveal>
-            <span className="smallcaps text-warmth">Booking</span>
-            <h2 className="font-display text-4xl font-light mt-5">Stays here.</h2>
-            <div className="mt-12 text-left">
-              {[
-                ["Check-In", "14:00"],
-                ["Check-Out", "10:00"],
-                ["Maximum Guests", String(property.guests)],
-                ["Minimum Stay", property.minStay],
-              ].map(([k, v]) => (
-                <div key={k} className="flex justify-between items-baseline py-5 border-b border-mist">
-                  <span className="smallcaps text-ink/60">{k}</span>
-                  <span className="font-display text-xl">{v}</span>
-                </div>
-              ))}
-            </div>
-            <div className="mt-12 flex justify-center">
-              <EnquirySheet
-                defaultProperty={property.id}
-                trigger={
-                  <button className="bg-ocean text-cream px-10 py-4 smallcaps hover:bg-ink transition-colors">
-                    Enquire about this house
+          <div className="mt-10 border-t border-warmth/60" />
+          {/* Tabs */}
+          <div className="mt-8 -mx-2 overflow-x-auto">
+            <div role="tablist" aria-label="Property sections" className="flex justify-center gap-3 md:gap-4 min-w-max px-2">
+              {TABS.map((t) => {
+                const active = tab === t.key;
+                return (
+                  <button
+                    key={t.key}
+                    role="tab"
+                    aria-selected={active}
+                    onClick={() => onTab(t.key)}
+                    className={`smallcaps tracking-[0.18em] text-xs md:text-sm px-5 md:px-7 py-3 border transition-colors ${
+                      active
+                        ? "bg-ocean text-cream border-ocean"
+                        : "border-ocean/60 text-ocean hover:bg-ocean/5"
+                    }`}
+                  >
+                    {t.label}
                   </button>
-                }
-              />
+                );
+              })}
             </div>
-          </Reveal>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* Tab panels */}
+      <section className="px-6 md:px-12 py-16 md:py-20">
+        <div className="max-w-5xl mx-auto">
+          {tab === "overview" && (
+            <Reveal>
+              <div className="text-center mb-10">
+                <span className="smallcaps text-warmth">The Home</span>
+              </div>
+              <div className="grid md:grid-cols-2 gap-10 md:gap-14">
+                {property.story.map((para, i) => (
+                  <p key={i} className="text-lg leading-[1.8] text-ink/85">{para}</p>
+                ))}
+              </div>
+              {property.pullQuote && (
+                <blockquote className="font-display italic text-3xl md:text-4xl text-ocean text-center max-w-2xl mx-auto py-14 md:py-16 leading-[1.3]">
+                  "{property.pullQuote}"
+                </blockquote>
+              )}
+              {property.experienceVignettes.length > 0 && (
+                <div className="mt-4 max-w-3xl mx-auto text-center">
+                  <span className="smallcaps text-warmth">The Experience</span>
+                  <div className="mt-8 flex flex-col">
+                    {property.experienceVignettes.map((v, i) => (
+                      <div key={v.title} className={`py-6 ${i > 0 ? "border-t border-mist" : ""}`}>
+                        <h3 className="font-display text-3xl md:text-4xl font-light">{v.title}</h3>
+                        <p className="mt-3 text-ink/80 max-w-xl mx-auto leading-[1.8]">{v.body}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </Reveal>
+          )}
+
+          {tab === "rooms" && (
+            <Reveal>
+              <div className="text-center mb-10">
+                <span className="smallcaps text-warmth">Rooms</span>
+                <h2 className="font-display text-4xl md:text-5xl font-light mt-4">Where you'll stay.</h2>
+              </div>
+              <div className="grid grid-cols-3 gap-6 max-w-xl mx-auto text-center">
+                {[
+                  ["Bedrooms", property.beds],
+                  ["Bathrooms", property.baths],
+                  ["Sleeps", property.guests],
+                ].map(([k, v]) => (
+                  <div key={k as string} className="border border-mist py-6">
+                    <div className="font-display text-4xl font-light">{v}</div>
+                    <div className="smallcaps text-ink/60 mt-2">{k}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="grid md:grid-cols-2 gap-12 mt-14">
+                <div>
+                  <h3 className="font-display text-2xl md:text-3xl font-light">Bedrooms &amp; Bathrooms</h3>
+                  {roomFeatures.length > 0 ? (
+                    <ul className="mt-5">
+                      {roomFeatures.map((f) => (
+                        <li key={f} className="flex items-start gap-4 py-3 border-b border-mist text-ink/85">
+                          <span className="text-warmth font-light text-xl leading-none mt-1">+</span>
+                          <span>{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="mt-5 text-ink/70 italic">Room-by-room detail coming soon.</p>
+                  )}
+                </div>
+                <div>
+                  <h3 className="font-display text-2xl md:text-3xl font-light">Kitchen</h3>
+                  {kitchenFeatures.length > 0 ? (
+                    <ul className="mt-5">
+                      {kitchenFeatures.map((f) => (
+                        <li key={f} className="flex items-start gap-4 py-3 border-b border-mist text-ink/85">
+                          <span className="text-warmth font-light text-xl leading-none mt-1">+</span>
+                          <span>{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="mt-5 text-ink/70 italic">Kitchen detail coming soon.</p>
+                  )}
+                </div>
+              </div>
+            </Reveal>
+          )}
+
+          {tab === "details" && (
+            <Reveal>
+              <div className="text-center">
+                <span className="smallcaps text-warmth">The Details</span>
+                <h2 className="font-display text-4xl md:text-5xl font-light mt-4">Everything in place.</h2>
+              </div>
+              <ul className="grid sm:grid-cols-2 gap-x-16 mt-12 text-left">
+                {property.features.map((f: string) => (
+                  <li key={f} className="flex items-start gap-5 py-4 border-b border-mist text-ink/85">
+                    <span className="text-warmth font-light text-xl leading-none mt-1">+</span>
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-16 max-w-3xl mx-auto">
+                <div className="text-center">
+                  <span className="smallcaps text-warmth">Booking</span>
+                  <h2 className="font-display text-3xl md:text-4xl font-light mt-4">Stays here.</h2>
+                </div>
+                <div className="mt-8 text-left">
+                  {[
+                    ["Check-In", "14:00"],
+                    ["Check-Out", "10:00"],
+                    ["Maximum Guests", String(property.guests)],
+                    ["Minimum Stay", property.minStay],
+                  ].map(([k, v]) => (
+                    <div key={k} className="flex justify-between items-baseline py-5 border-b border-mist">
+                      <span className="smallcaps text-ink/60">{k}</span>
+                      <span className="font-display text-xl">{v}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-10 flex justify-center">
+                  <EnquirySheet
+                    defaultProperty={property.id}
+                    trigger={
+                      <button className="bg-ocean text-cream px-10 py-4 smallcaps hover:bg-ink transition-colors">
+                        Enquire about this house
+                      </button>
+                    }
+                  />
+                </div>
+              </div>
+            </Reveal>
+          )}
+
+          {tab === "location" && (
+            <Reveal>
+              <div className="grid md:grid-cols-2 gap-10 md:gap-14 items-center">
+                <div className="relative aspect-[4/5] bg-mist overflow-hidden">
+                  <img
+                    src={property.settingImage || property.gallery[2]}
+                    alt=""
+                    loading="lazy"
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  <span className="smallcaps text-warmth">The Setting</span>
+                  <h2 className="font-display text-4xl md:text-5xl font-light mt-4 leading-[1.05]">
+                    Where you'll be.
+                  </h2>
+                  <div className="mt-6 space-y-5 text-ink/80 leading-[1.8]">
+                    {settingParagraphs.map((p, i) => (
+                      <p key={i}>{p}</p>
+                    ))}
+                  </div>
+                  <Link to="/guide" className="inline-block mt-8 smallcaps text-ocean link-underline">
+                    Explore the guide →
+                  </Link>
+                </div>
+              </div>
+              <div className="mt-16 text-center">
+                <span className="smallcaps text-warmth">On the Map</span>
+                <div className="mt-8">
+                  <CoastMap pin={pin} />
+                </div>
+              </div>
+            </Reveal>
+          )}
+
+          {tab === "gallery" && (
+            <Reveal>
+              <div className="columns-1 md:columns-2 lg:columns-3 gap-4 md:gap-6 [column-fill:_balance]">
+                {property.gallery.map((src: string, i: number) => (
+                  <Lightbox
+                    key={i}
+                    images={property.gallery}
+                    startIndex={i}
+                    trigger={
+                      <div className="mb-4 md:mb-6 break-inside-avoid overflow-hidden bg-mist cursor-zoom-in">
+                        <img
+                          src={src}
+                          alt=""
+                          loading="lazy"
+                          className={`w-full object-cover transition-all duration-700 hover:scale-[1.03] ${
+                            i % 3 === 0 ? "aspect-[3/4]" : i % 3 === 1 ? "aspect-[4/3]" : "aspect-square"
+                          }`}
+                        />
+                      </div>
+                    }
+                  />
+                ))}
+              </div>
+            </Reveal>
+          )}
         </div>
       </section>
 
-      {/* 10. Map */}
-      <section className="px-6 py-24">
-        <div className="max-w-5xl mx-auto text-center">
-          <Reveal>
-            <span className="smallcaps text-warmth">On the Map</span>
-            <div className="mt-12 bg-cream">
-              <CoastMap pin={pin} />
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* 12. Other houses */}
-      <section className="px-6 md:px-12 py-32">
+      {/* Other houses */}
+      <section className="px-6 md:px-12 py-20">
         <div className="max-w-[1320px] mx-auto">
           <Reveal>
-            <div className="text-center mb-16">
+            <div className="text-center mb-12">
               <span className="smallcaps text-warmth">Also in the Collection</span>
-              <h2 className="font-display text-4xl md:text-5xl font-light mt-5">Two more.</h2>
+              <h2 className="font-display text-4xl md:text-5xl font-light mt-4">Two more.</h2>
             </div>
             <div className="grid md:grid-cols-2 gap-12">
               {others.map((p) => (
