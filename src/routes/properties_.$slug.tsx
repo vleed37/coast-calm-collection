@@ -183,7 +183,7 @@ function PropertyPage() {
               </div>
               {property.pullQuote && (
                 <blockquote className="font-display italic text-3xl md:text-4xl text-ocean text-center max-w-2xl mx-auto py-14 md:py-16 leading-[1.3]">
-                  "{property.pullQuote}"
+                  {`\u201C${property.pullQuote}\u201D`}
                 </blockquote>
               )}
               {property.experienceVignettes.length > 0 && (
