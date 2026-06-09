@@ -4,6 +4,7 @@ import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { EnquiryForm } from "@/components/site/EnquiryForm";
 import { useState } from "react";
+import contactCover from "@/assets/contact-cover.jpg.asset.json";
 
 export const Route = createFileRoute("/contact")({
   head: () =>
@@ -25,7 +26,7 @@ function ContactPage() {
       <div className="pt-32" />
       <section className="grid md:grid-cols-2 min-h-[calc(100vh-8rem)]">
         <div className="relative aspect-[4/5] md:aspect-auto bg-mist overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1505142468610-359e7d316be0?auto=format&fit=crop&w=1600&q=80" alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <img src={contactCover.url} alt="" className="absolute inset-0 w-full h-full object-cover" />
         </div>
         <div className="bg-cream py-20 md:py-24 px-6 md:px-16 flex items-center">
           <div className="w-full max-w-lg">
