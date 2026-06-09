@@ -72,8 +72,8 @@ function PolicyPage() {
   return (
     <div className="page-fade bg-cream min-h-screen">
       <Nav />
-      <div className="pt-40 md:pt-48" />
-      <section className="max-w-2xl mx-auto px-6 py-20 md:py-32">
+      <div className="pt-28 md:pt-32" />
+      <section className="max-w-2xl mx-auto px-6 pb-20 md:pb-32 pt-4">
         <Reveal>
           <span className="smallcaps text-warmth">The Fine Print</span>
           <h1 className="font-display text-5xl md:text-7xl mt-4 font-light leading-[1]">Booking Policy</h1>
