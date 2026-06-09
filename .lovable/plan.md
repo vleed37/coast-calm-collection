@@ -1,67 +1,55 @@
-# Plan
+# Plan — Property detail page restructure with tabs
 
-## A. Prices — "From R1,500 / night"
+Applies to all three live property routes (rendered by `src/routes/properties_.$slug.tsx`).
 
-- Migration updating `properties.from_price` to `R1,500` for the three live homes
-  (Sage & Salt, Sky & Sea, 10 Seaview Close). 37 Wanoo Drive stays as-is.
-- Update `PropertyCard.tsx` so the price line renders `From {fromPrice} / night`
-  (currently just `From {fromPrice}`). Detail page (`properties_.$slug.tsx`)
-  already shows `From {fromPrice} per night` — I'll align it to the same
-  `/ night` wording so the brand reads consistently across card and detail.
+## A. Hero — 20% shorter
+`h-[90vh]` → `h-[72vh]` so the masthead (name + location + specs + tabs) lands above the fold.
 
-Storing the bare number (`R1,500`) instead of the full phrase keeps JSON-LD's
-`priceRange: "From R1,500 per night"` clean and avoids "/ night per night"
-duplication in structured data.
+## B. Location subtitle on two lines
+The DB already stores `location` as `"Steenbergs Cove Estate, St Helena Bay"` / `"Shelley Point Estate, St Helena Bay"`. I'll split on the first comma in the component and render the estate on line 1, the town on line 2 — no DB change, no hard-coding.
 
-## B. 37 Wanoo Drive cover image
+## C. Specs above the gold line
+Reorder the masthead block: name → location (two lines, centered) → beds · baths · guests · min-stay row → then the gold/`border-mist` divider.
 
-- Upload `/mnt/user-uploads/10409_COVER.jpeg` via `lovable-assets create`
-  → `src/assets/wanoo-cover.jpg.asset.json`.
-- Migration updating `properties.hero_image` for `37-wanoo-drive` to the CDN
-  `url` from that pointer file.
+## D. Tabs — in-place swap
+Below the divider, a tab bar with `Overview · Rooms · Details · Location · Gallery`.
 
-(Two migrations combined into one — single approval.)
+**Behaviour:** I'll implement the **in-place swap** (preferred option). A `useState<TabKey>` drives which panel renders; the hero, name, location, specs and tab bar stay mounted at the top of the page and only the area beneath the tabs re-renders.
 
-## C. Properties grid — symmetrical & aligned
+**Tab styling:** outlined `border border-ocean text-ocean` rectangles, smallcaps label, equal padding. Active tab → filled `bg-ocean text-cream`. Mobile: horizontal scroll row.
 
-Rework `src/routes/properties.tsx` and `src/components/site/PropertyCard.tsx`:
+**Content mapping (using existing DB fields):**
 
-**Grid (`properties.tsx`):**
-- Replace the current `grid md:grid-cols-2 gap-x-12 gap-y-20` + per-card
-  `translate-y-20/32` stagger with a clean equal-height grid:
-  `grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-12 items-start`.
-- Drop the `offset={i % 2 === 1}` prop entirely so every card sits at the
-  same baseline.
-- Cards become full-bleed within their column; no negative margins.
+| Tab | Source on the current page |
+| --- | --- |
+| Overview | "The Villa" intro/story paragraphs (renamed to **"The Home"**) + the inline pull quote + the existing "The Experience" vignettes (these are the headline experience copy) |
+| Rooms | Beds/baths/guests breakdown + any items in `features` matching `/bed|bath|kitchen|cook|appliance|linen/i`, grouped under Bedrooms & Bathrooms / Kitchen subheadings. **Flag:** there's no dedicated rooms/kitchen copy in the data model — I'm deriving from `features` so the tab isn't empty. If the client wants real prose here, we'll need to add a `rooms_copy` / `kitchen_copy` field and admin UI; I'll list it as a follow-up rather than fabricate copy. |
+| Details | Full `features` grid ("Everything in place.") + booking facts (Check-In 14:00, Check-Out 10:00, Max Guests, Min Stay) + the "Enquire about this house" button |
+| Location | "The Setting" image + `settingCopy` paragraphs + "Explore the guide →" link + the `CoastMap` |
+| Gallery | Existing masonry gallery with the Lightbox trigger |
 
-**Card (`PropertyCard.tsx`):**
-- Remove the `offset` prop and translate-y classes.
-- Wrap each card in a `flex flex-col h-full` container so equal-height rows
-  align price/CTA at the bottom (`mt-auto` on the footer block).
-- Image: change from `aspect-[3/4]` (tall, crops landscape photos) to a
-  consistent landscape `aspect-[4/3]` with `object-cover` and
-  `object-[center_60%]` framing. All four property hero photos are landscape,
-  so 4:3 + cover shows the building/horizon without cutting the roofline or
-  pool the way 3:4 does today. Image dimensions are now identical card-to-card.
-  - I'm choosing `object-cover` (not `object-contain`) because contain would
-    letterbox each photo at a different inset and break the "aligned, equal"
-    look the client is asking for. 4:3 is the closest aspect to the actual
-    photos, so cover crops are minimal. If the client still feels a specific
-    photo loses something important, the fix is to swap that hero photo (or
-    re-crop the source) rather than letterbox the whole grid. Flag if you'd
-    prefer contain.
-- Card body: location → name → beds/baths/guests stats → divider → price +
-  "View Property →" — all visible above the fold within the card, regardless
-  of column.
-- Coming-soon variant gets the same shape (4:3, h-full, same body padding)
-  so 37 Wanoo Drive aligns with the live homes.
+## E. Cleanups
+- Rename "The Villa" kicker to **"The Home"**.
+- Remove the standalone full-width **pull-quote band** (section 5) — it's a duplicate of the quote already shown inside Overview; that's clearly filler.
+- Tighten vertical rhythm: section paddings drop from `py-32 md:py-40` and `py-24 md:py-32` to a consistent `py-16 md:py-20` inside tab panels (the masthead and tab bar already provide visual separation).
+- Keep the "Also in the Collection / Two more" section but render it **outside the tab system** below the tab content with a single `py-20` so it's not a giant blank gap.
+- Keep the floating "Enquire" CTA (it appears once the hero is scrolled past).
 
-**Home page**
-- The home page no longer renders `PropertyCard` (removed last turn), so
-  card changes only affect `/properties`.
+**Items I will NOT delete without confirmation** (in case they're real content):
+- "Also in the Collection" related-houses block — keeping, tightened.
+- The `settingImage` (used inside Location tab).
+- The map (used inside Location tab).
+
+If anything else was marked for removal in the client's notes that I'm not seeing in code, list them in your reply and I'll remove on the next pass.
+
+## Technical notes
+
+- Tab state lives in `useState`; only the active panel is rendered (cleaner DOM, lighter paint). JSON-LD already carries the long description so SEO is unaffected.
+- The masthead gets an `id="top"` and is plain document flow — it doesn't actually become `position: fixed`; "stays put" means it stays at the top of the page and does not re-render between tab clicks. Switching tabs scrolls to the masthead so the user lands at the top of the freshly-loaded section.
+- No DB migrations, no route file path changes, no changes to `Nav` / `Footer` / `PropertyCard`.
+
+## Files touched
+- `src/routes/properties_.$slug.tsx` — the entire restructure.
 
 ## Verification
-
-- Confirm in preview at desktop that the two rows line up evenly, full image
-  visible (no roofline/pool clipping), price + CTA bottom-aligned.
-- Confirm DB shows the new prices and the new 37 Wanoo Drive image URL.
+- Open `/properties/sage-and-salt`, `/properties/sky-and-sea`, `/properties/10-seaview-close`: confirm hero + name + specs + tabs visible without scrolling on a 1080-tall viewport; switching tabs updates only the panel; location reads on two lines per property.
