@@ -52,7 +52,7 @@ function CancellationTable({
 export const Route = createFileRoute("/booking-policy")({
   head: () =>
     buildHead({
-      title: "Booking Policy | Lone Bull Properties",
+      title: "Booking Policy | Lone Bull Rentals",
       description:
         "How to stay with us — reservations, payment terms, cancellation policy, house rules, and check-in details for our West Coast villas.",
       path: "/booking-policy",
