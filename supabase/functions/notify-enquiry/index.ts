@@ -37,7 +37,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const to = Deno.env.get("LINDA_NOTIFY_EMAIL");
+    const to = Deno.env.get("LINDA_NOTIFY_EMAIL") ?? "rental@lonebullgroup.co.za";
     const apiKey = Deno.env.get("RESEND_API_KEY");
     const fromAddr = Deno.env.get("ENQUIRY_FROM_EMAIL") ?? "onboarding@resend.dev";
 
@@ -54,7 +54,8 @@ Deno.serve(async (req) => {
       .filter(([, v]) => v)
       .map(([k, v]) => `${k}: ${v}`)
       .join("\n");
-    const subject = `New enquiry from ${enquiry.name ?? "unknown"}`;
+    const propertyLabel = enquiry.property_of_interest ?? "General";
+    const subject = `New enquiry — ${propertyLabel} — ${enquiry.name ?? "unknown"}`;
 
     if (!to || !apiKey) {
       console.log("[notify-enquiry] (no email config) ", subject, "\n", body);
