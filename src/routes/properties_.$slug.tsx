@@ -71,9 +71,9 @@ function PropertyPage() {
     return [property.location.slice(0, idx).trim() + ",", property.location.slice(idx + 1).trim()];
   })();
 
-  // Rooms tab: derive bedroom/bathroom and kitchen items from features
-  const roomFeatures = property.features.filter((f) => /bed|bath|linen|sleep|sheet|towel/i.test(f));
-  const kitchenFeatures = property.features.filter((f) => /kitchen|cook|oven|fridge|coffee|appliance|dishwash/i.test(f));
+  // Rooms tab reads from the dedicated rooms_breakdown field so it never
+  // overlaps with the general amenities shown on the Details tab.
+  const roomFeatures = property.roomsBreakdown;
 
   type TabKey = "overview" | "rooms" | "details" | "location" | "gallery";
   const TABS: { key: TabKey; label: string }[] = [
@@ -243,37 +243,20 @@ function PropertyPage() {
                   </div>
                 ))}
               </div>
-              <div className="grid md:grid-cols-2 gap-12 mt-14">
-                <div>
-                  <h3 className="font-display text-2xl md:text-3xl font-light">Bedrooms &amp; Bathrooms</h3>
-                  {roomFeatures.length > 0 ? (
-                    <ul className="mt-5">
-                      {roomFeatures.map((f) => (
-                        <li key={f} className="flex items-start gap-4 py-3 border-b border-mist text-ink/85">
-                          <span className="text-warmth font-light text-xl leading-none mt-1">+</span>
-                          <span>{f}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="mt-5 text-ink/70 italic">Room-by-room detail coming soon.</p>
-                  )}
-                </div>
-                <div>
-                  <h3 className="font-display text-2xl md:text-3xl font-light">Kitchen</h3>
-                  {kitchenFeatures.length > 0 ? (
-                    <ul className="mt-5">
-                      {kitchenFeatures.map((f) => (
-                        <li key={f} className="flex items-start gap-4 py-3 border-b border-mist text-ink/85">
-                          <span className="text-warmth font-light text-xl leading-none mt-1">+</span>
-                          <span>{f}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="mt-5 text-ink/70 italic">Kitchen detail coming soon.</p>
-                  )}
-                </div>
+              <div className="max-w-2xl mx-auto mt-14">
+                <h3 className="font-display text-2xl md:text-3xl font-light">Bedrooms &amp; Bathrooms</h3>
+                {roomFeatures.length > 0 ? (
+                  <ul className="mt-5">
+                    {roomFeatures.map((f) => (
+                      <li key={f} className="flex items-start gap-4 py-3 border-b border-mist text-ink/85">
+                        <span className="text-warmth font-light text-xl leading-none mt-1">+</span>
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="mt-5 text-ink/70 italic">Room-by-room detail coming soon.</p>
+                )}
               </div>
             </Reveal>
           )}
