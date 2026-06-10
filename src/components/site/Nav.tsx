@@ -7,7 +7,6 @@ const links = [
   { to: "/guide", label: "Local Guide" },
   { to: "/booking-policy", label: "Booking Policy" },
   { to: "/contact", label: "Contact" },
-  { to: "/enquire", label: "Enquire" },
 ] as const;
 
 export function Nav({ transparentOverHero = false }: { transparentOverHero?: boolean }) {
