@@ -39,6 +39,7 @@ const schema = z.object({
   setting_image: z.string().url().or(z.literal("")).optional(),
   map_url: z.string().url().or(z.literal("")).optional(),
   features: z.array(z.object({ value: z.string().min(1) })),
+  rooms_breakdown: z.array(z.object({ value: z.string().min(1) })),
   vignettes: z.array(z.object({ title: z.string().min(1), body: z.string().min(1) })),
   sort_order: z.coerce.number().int(),
   seo_title: z.string().max(200).optional(),
@@ -62,13 +63,14 @@ export function PropertyForm({ id }: { id?: string }) {
       is_published: true, long_copy_text: "", beds: 0, baths: 0, guests: 0,
       min_stay: "", from_price: "", setting_copy: "", setting_image: "",
       map_url: "",
-      features: [], vignettes: [],
+      features: [], rooms_breakdown: [], vignettes: [],
       sort_order: 0, seo_title: "", seo_description: "", seo_keywords: "", seo_og_image: "",
     },
   });
 
   const { register, handleSubmit, control, watch, setValue, formState: { errors } } = form;
   const features = useFieldArray({ control, name: "features" });
+  const roomsBreakdown = useFieldArray({ control, name: "rooms_breakdown" });
   const vignettes = useFieldArray({ control, name: "vignettes" });
 
   const nameValue = watch("name");
@@ -93,6 +95,7 @@ export function PropertyForm({ id }: { id?: string }) {
         setting_copy: data.setting_copy, setting_image: data.setting_image ?? "",
         map_url: data.map_url ?? "",
         features: (data.features ?? []).map((value: string) => ({ value })),
+        rooms_breakdown: (data.rooms_breakdown ?? []).map((value: string) => ({ value })),
         vignettes: Array.isArray(data.experience_vignettes)
           ? (data.experience_vignettes as Array<{ title: string; body: string }>)
           : [],
@@ -116,6 +119,7 @@ export function PropertyForm({ id }: { id?: string }) {
       setting_copy: v.setting_copy, setting_image: v.setting_image || null,
       map_url: v.map_url || null,
       features: v.features.map((f) => f.value),
+      rooms_breakdown: v.rooms_breakdown.map((f) => f.value),
       experience_vignettes: v.vignettes,
       sort_order: v.sort_order,
       seo_title: v.seo_title || null,
@@ -253,6 +257,25 @@ export function PropertyForm({ id }: { id?: string }) {
         </div>
         <Button type="button" variant="outline" onClick={() => features.append({ value: "" })}>
           <Plus className="w-4 h-4 mr-2" />Add feature
+        </Button>
+      </Section>
+
+      <Section title="Rooms breakdown">
+        <p className="text-xs text-ink/60 -mt-2">
+          Per-room lines shown on the Rooms tab (e.g. "Main bedroom: 1 King bed and en-suite bathroom"). Kept separate from Features so they don't appear in the Details "Everything in place" grid.
+        </p>
+        <div className="space-y-2">
+          {roomsBreakdown.fields.map((f, i) => (
+            <div key={f.id} className="flex gap-2">
+              <Input {...register(`rooms_breakdown.${i}.value` as const)} className="flex-1" />
+              <Button type="button" variant="ghost" size="icon" onClick={() => roomsBreakdown.remove(i)}>
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+          ))}
+        </div>
+        <Button type="button" variant="outline" onClick={() => roomsBreakdown.append({ value: "" })}>
+          <Plus className="w-4 h-4 mr-2" />Add room line
         </Button>
       </Section>
 
