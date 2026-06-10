@@ -193,6 +193,9 @@ export function PropertyForm({ id }: { id?: string }) {
 
       <Section title="The Setting">
         <Field label="Setting copy"><Textarea rows={4} {...register("setting_copy")} /></Field>
+        <Field label="Google Maps URL" error={errors.map_url?.message}>
+          <Input {...register("map_url")} placeholder="https://maps.google.com/..." />
+        </Field>
         <Controller
           control={control}
           name="setting_image"
