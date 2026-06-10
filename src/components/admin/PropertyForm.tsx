@@ -37,6 +37,7 @@ const schema = z.object({
   from_price: z.string().min(1).max(100),
   setting_copy: z.string().min(1),
   setting_image: z.string().url().or(z.literal("")).optional(),
+  map_url: z.string().url().or(z.literal("")).optional(),
   features: z.array(z.object({ value: z.string().min(1) })),
   vignettes: z.array(z.object({ title: z.string().min(1), body: z.string().min(1) })),
   sort_order: z.coerce.number().int(),
@@ -60,6 +61,7 @@ export function PropertyForm({ id }: { id?: string }) {
       name: "", slug: "", location: "", description: "", pull_quote: "",
       is_published: true, long_copy_text: "", beds: 0, baths: 0, guests: 0,
       min_stay: "", from_price: "", setting_copy: "", setting_image: "",
+      map_url: "",
       features: [], vignettes: [],
       sort_order: 0, seo_title: "", seo_description: "", seo_keywords: "", seo_og_image: "",
     },
@@ -89,6 +91,7 @@ export function PropertyForm({ id }: { id?: string }) {
         beds: data.beds, baths: data.baths, guests: data.guests,
         min_stay: data.min_stay, from_price: data.from_price,
         setting_copy: data.setting_copy, setting_image: data.setting_image ?? "",
+        map_url: data.map_url ?? "",
         features: (data.features ?? []).map((value: string) => ({ value })),
         vignettes: Array.isArray(data.experience_vignettes)
           ? (data.experience_vignettes as Array<{ title: string; body: string }>)
@@ -111,6 +114,7 @@ export function PropertyForm({ id }: { id?: string }) {
       beds: v.beds, baths: v.baths, guests: v.guests,
       min_stay: v.min_stay, from_price: v.from_price,
       setting_copy: v.setting_copy, setting_image: v.setting_image || null,
+      map_url: v.map_url || null,
       features: v.features.map((f) => f.value),
       experience_vignettes: v.vignettes,
       sort_order: v.sort_order,
