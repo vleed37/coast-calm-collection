@@ -122,6 +122,7 @@ export type Database = {
           min_stay: string
           name: string
           pull_quote: string | null
+          rooms_breakdown: string[]
           seo_description: string | null
           seo_keywords: string | null
           seo_og_image: string | null
@@ -152,6 +153,7 @@ export type Database = {
           min_stay: string
           name: string
           pull_quote?: string | null
+          rooms_breakdown?: string[]
           seo_description?: string | null
           seo_keywords?: string | null
           seo_og_image?: string | null
@@ -182,6 +184,7 @@ export type Database = {
           min_stay?: string
           name?: string
           pull_quote?: string | null
+          rooms_breakdown?: string[]
           seo_description?: string | null
           seo_keywords?: string | null
           seo_og_image?: string | null

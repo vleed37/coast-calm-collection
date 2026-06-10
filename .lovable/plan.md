@@ -1,37 +1,34 @@
-# Separate Contact and Enquiry pages
+# Separate Rooms breakdown from Details/features
 
-## Assets
-Upload both uploaded images via `lovable-assets` from `/mnt/user-uploads/`:
-- `CONTACT_US_PAGE.jpg` → `src/assets/contact-cover.jpg.asset.json` (replaces existing contact-cover, used on new info Contact page — image of boulders + tidal pool)
-- `ENQUIRY_PAGE.jpg` → `src/assets/enquire-cover.jpg.asset.json` (used on new enquire form page — aerial of rocks + kayak)
+## Problem
+Rooms tab and Details "Everything in place" grid both read from `properties.features`. The Rooms tab filters with a regex (`bed|bath|linen|sleep|sheet|towel`) so room lines also leak into Details. Result: lines like "Main bedroom: 1 King bed and en-suite bathroom" appear in both places.
 
-## Routes
+## Solution
+Introduce a dedicated `rooms_breakdown text[]` column on `properties`, separate from `features`. Rooms tab renders `rooms_breakdown` only. Details renders `features` only — no filtering, no overlap.
 
-**New `src/routes/enquire.tsx`** — copy current contact form page verbatim, but:
-- route `/enquire`, title "Enquire | Lone Bull Rentals"
-- import and use `enquireCover` for the left image
-- eyebrow "Enquire", heading "Begin a conversation."
-- keeps `<EnquiryForm>` exactly as-is
+## Steps
 
-**Rewrite `src/routes/contact.tsx`** — same split layout shell (Nav, image left, content right, Footer, cream palette, same heading scale), no form. Right column contains:
-- Eyebrow "Contact", h1 "Get in touch."
-- Email block: "Get in touch" small label + `rental@lonebullgroup.co.za` as `mailto:` link
-- Operating Hours block (Mon–Fri 08:00–16:00; Sat/Sun/PH 08:30–12:00)
-- Head Office Location block (Waterfront Terraces, Tyger Waterfront, Bellville, Cape Town, South Africa)
-- Connect block: Facebook icon (lucide `Facebook`) link to the FB URL, `target="_blank" rel="noreferrer noopener"`
-- Image left uses the new contact cover
+### 1. Database migration
+- Add column `rooms_breakdown text[] not null default '{}'` to `public.properties`.
+- One-time data move for the three live properties: copy the room-related lines (bedroom / bathroom / linen / towels) out of `features` into `rooms_breakdown`, then remove those lines from `features`. Applies to `sage-and-salt`, `sky-and-sea`, `10-seaview-close`. `37-wanoo-drive` has empty features — leave as-is.
 
-## Navigation
+### 2. Query layer (`src/lib/queries/properties.ts`)
+- Add `roomsBreakdown: string[]` to `Property`.
+- Map `row.rooms_breakdown ?? []` in `mapRow`.
 
-**`src/components/site/Nav.tsx`**
-- Replace links array with: Home, Properties, Local Guide, Booking Policy, Contact, Enquire (in that order — all small caps, stays on one line at md+).
-- Top-right "Enquire Now" button → `to="/enquire"`.
+### 3. Property page (`src/routes/properties_.$slug.tsx`)
+- Rooms tab: render `property.roomsBreakdown` as a single list under one heading ("Bedrooms & Bathrooms"). Drop the regex-derived `roomFeatures` / `kitchenFeatures` split (kitchen items stay in Details where they read naturally; the existing Kitchen subsection on Rooms was also fed by the same regex and will be removed for the same reason — keep Rooms focused on the room breakdown).
+- Details tab: render `property.features` as-is (no filtering needed since room lines are no longer in there).
 
-**`src/components/site/Footer.tsx`**
-- Add "Enquire" → `/enquire` to the link row alongside existing items.
+### 4. Admin editor (`src/components/admin/PropertyForm.tsx`)
+- Add a "Rooms breakdown" section above "Features" with the same add/remove pattern as features (useFieldArray on `rooms_breakdown`).
+- Include in schema, defaultValues, form.reset hydration, and submit payload.
+
+### 5. Types
+After migration is approved & run, `src/integrations/supabase/types.ts` regenerates with the new column.
 
 ## Verification
-- `/contact` renders info page with mailto link, hours, address, Facebook icon, new boulders image.
-- `/enquire` renders the existing form with new aerial image.
-- Nav "Contact" → info page; "Enquire" link and "Enquire Now" button → form.
-- No leftover references to the form on `/contact`.
+- `/properties/sage-and-salt` Details grid shows ocean views, Wi-Fi, braai, kitchen, etc. — no "Main bedroom / Second bedroom / 1 full bathroom" lines.
+- Rooms tab on the same page still shows those three lines.
+- Same for `sky-and-sea` and `10-seaview-close`.
+- `/admin/properties/<id>` shows a "Rooms breakdown" editor populated with the moved lines; editing it does not change Features.
