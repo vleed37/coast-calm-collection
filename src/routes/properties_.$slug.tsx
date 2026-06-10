@@ -8,12 +8,7 @@ import { PropertyCard } from "@/components/site/PropertyCard";
 import { EnquirySheet } from "@/components/site/EnquirySheet";
 import { Lightbox } from "@/components/site/Lightbox";
 import { fetchPropertyBySlug, fetchPublishedProperties, type Property } from "@/lib/queries/properties";
-
-const PROPERTY_PINS: Record<string, { x: number; y: number; label: string }> = {
-  "sage-and-salt": { x: 110, y: 140, label: "Steenbergs Cove" },
-  "sky-and-sea": { x: 110, y: 140, label: "Steenbergs Cove" },
-  "10-seaview-close": { x: 105, y: 155, label: "Shelley Point" },
-};
+import westCoastMapAsset from "@/assets/west-coast-map.png.asset.json";
 
 export const Route = createFileRoute("/properties_/$slug")({
   loader: async ({ params }) => {
@@ -61,7 +56,6 @@ function PropertyPage() {
     .split(/\n\n+/)
     .map((s) => s.trim())
     .filter(Boolean);
-  const pin = PROPERTY_PINS[property.id] ?? { x: 110, y: 150, label: property.location };
   const [showCta, setShowCta] = useState(false);
   useEffect(() => {
     const onScroll = () => setShowCta(window.scrollY > window.innerHeight);
