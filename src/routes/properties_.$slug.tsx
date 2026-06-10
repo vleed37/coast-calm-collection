@@ -8,12 +8,7 @@ import { PropertyCard } from "@/components/site/PropertyCard";
 import { EnquirySheet } from "@/components/site/EnquirySheet";
 import { Lightbox } from "@/components/site/Lightbox";
 import { fetchPropertyBySlug, fetchPublishedProperties, type Property } from "@/lib/queries/properties";
-
-const PROPERTY_PINS: Record<string, { x: number; y: number; label: string }> = {
-  "sage-and-salt": { x: 110, y: 140, label: "Steenbergs Cove" },
-  "sky-and-sea": { x: 110, y: 140, label: "Steenbergs Cove" },
-  "10-seaview-close": { x: 105, y: 155, label: "Shelley Point" },
-};
+import westCoastMapAsset from "@/assets/west-coast-map.png.asset.json";
 
 export const Route = createFileRoute("/properties_/$slug")({
   loader: async ({ params }) => {
@@ -61,7 +56,6 @@ function PropertyPage() {
     .split(/\n\n+/)
     .map((s) => s.trim())
     .filter(Boolean);
-  const pin = PROPERTY_PINS[property.id] ?? { x: 110, y: 150, label: property.location };
   const [showCta, setShowCta] = useState(false);
   useEffect(() => {
     const onScroll = () => setShowCta(window.scrollY > window.innerHeight);
@@ -173,6 +167,35 @@ function PropertyPage() {
         <div className="max-w-5xl mx-auto">
           {tab === "overview" && (
             <Reveal>
+              {/* Booking facts box — moved here from the Details tab */}
+              <div className="max-w-3xl mx-auto mb-16 md:mb-20">
+                <div className="text-center">
+                  <span className="smallcaps text-warmth">Booking</span>
+                </div>
+                <div className="mt-8 text-left">
+                  {[
+                    ["Check-In", "14:00"],
+                    ["Check-Out", "10:00"],
+                    ["Maximum Guests", String(property.guests)],
+                    ["Minimum Stay", property.minStay],
+                  ].map(([k, v]) => (
+                    <div key={k} className="flex justify-between items-baseline py-5 border-b border-mist">
+                      <span className="smallcaps text-ink/60">{k}</span>
+                      <span className="font-display text-xl">{v}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-10 flex justify-center">
+                  <EnquirySheet
+                    defaultProperty={property.id}
+                    trigger={
+                      <button className="bg-ocean text-cream px-10 py-4 smallcaps hover:bg-ink transition-colors">
+                        Enquire about this house
+                      </button>
+                    }
+                  />
+                </div>
+              </div>
               <div className="text-center mb-10">
                 <span className="smallcaps text-warmth">The Home</span>
               </div>
@@ -269,35 +292,6 @@ function PropertyPage() {
                   </li>
                 ))}
               </ul>
-              <div className="mt-16 max-w-3xl mx-auto">
-                <div className="text-center">
-                  <span className="smallcaps text-warmth">Booking</span>
-                  <h2 className="font-display text-3xl md:text-4xl font-light mt-4">Stays here.</h2>
-                </div>
-                <div className="mt-8 text-left">
-                  {[
-                    ["Check-In", "14:00"],
-                    ["Check-Out", "10:00"],
-                    ["Maximum Guests", String(property.guests)],
-                    ["Minimum Stay", property.minStay],
-                  ].map(([k, v]) => (
-                    <div key={k} className="flex justify-between items-baseline py-5 border-b border-mist">
-                      <span className="smallcaps text-ink/60">{k}</span>
-                      <span className="font-display text-xl">{v}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-10 flex justify-center">
-                  <EnquirySheet
-                    defaultProperty={property.id}
-                    trigger={
-                      <button className="bg-ocean text-cream px-10 py-4 smallcaps hover:bg-ink transition-colors">
-                        Enquire about this house
-                      </button>
-                    }
-                  />
-                </div>
-              </div>
             </Reveal>
           )}
 
@@ -330,7 +324,24 @@ function PropertyPage() {
               <div className="mt-16 text-center">
                 <span className="smallcaps text-warmth">On the Map</span>
                 <div className="mt-8">
-                  <CoastMap pin={pin} />
+                  <img
+                    src={westCoastMapAsset.url}
+                    alt="Map of South Africa's West Coast"
+                    loading="lazy"
+                    className="w-full max-w-xl mx-auto h-auto"
+                  />
+                  {property.mapUrl && (
+                    <div className="mt-8 flex justify-center">
+                      <a
+                        href={property.mapUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block bg-ocean text-cream px-10 py-4 smallcaps hover:bg-ink transition-colors"
+                      >
+                        View on Google Maps →
+                      </a>
+                    </div>
+                  )}
                 </div>
               </div>
             </Reveal>
@@ -403,44 +414,3 @@ function PropertyPage() {
   );
 }
 
-function CoastMap({ pin }: { pin: { x: number; y: number; label: string } }) {
-  return (
-    <svg viewBox="0 0 320 320" className="w-full max-w-xl mx-auto" aria-hidden>
-      {/* coastline: Cape Town up to Lambert's Bay */}
-      <path
-        d="M 200 290 C 180 270, 160 255, 150 235 C 142 218, 138 205, 130 190 C 122 175, 110 165, 105 148 C 100 130, 108 115, 100 95 C 95 80, 85 70, 80 55 C 78 45, 82 35, 78 25"
-        stroke="#1B1F23"
-        strokeWidth="1.25"
-        fill="none"
-        strokeLinecap="round"
-      />
-      {/* sea side hint */}
-      <path
-        d="M 60 25 L 30 25 L 30 295 L 200 295"
-        stroke="#E6DFD3"
-        strokeWidth="1"
-        fill="none"
-      />
-      {/* pin */}
-      <circle cx={pin.x} cy={pin.y} r="6" fill="#B8916B" />
-      <circle cx={pin.x} cy={pin.y} r="14" fill="none" stroke="#B8916B" strokeWidth="0.75" opacity="0.5" />
-      <text
-        x={pin.x + 22}
-        y={pin.y + 4}
-        fill="#1B1F23"
-        fontFamily="Inter, sans-serif"
-        fontSize="9"
-        letterSpacing="2"
-      >
-        {pin.label.toUpperCase()}
-      </text>
-      {/* anchor labels */}
-      <text x="205" y="295" fill="#1B1F23" fontFamily="Inter, sans-serif" fontSize="8" letterSpacing="2">
-        CAPE TOWN
-      </text>
-      <text x="60" y="22" fill="#1B1F23" fontFamily="Inter, sans-serif" fontSize="8" letterSpacing="2">
-        LAMBERT'S BAY
-      </text>
-    </svg>
-  );
-}

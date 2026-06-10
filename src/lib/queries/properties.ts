@@ -24,6 +24,7 @@ export type Property = {
   settingImage: string | null;
   experienceVignettes: Vignette[];
   comingSoon: boolean;
+  mapUrl: string | null;
   // SEO overrides
   seoTitle: string | null;
   seoDescription: string | null;
@@ -70,6 +71,7 @@ function mapRow(row: any): Property {
     settingImage: row.setting_image ?? cover ?? null,
     experienceVignettes: vignettes,
     comingSoon: row.coming_soon ?? false,
+    mapUrl: row.map_url ?? null,
     seoTitle: row.seo_title ?? null,
     seoDescription: row.seo_description ?? null,
     seoKeywords: row.seo_keywords ?? null,
