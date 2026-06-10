@@ -118,6 +118,7 @@ export type Database = {
           is_published: boolean
           location: string
           long_copy: string[]
+          map_url: string | null
           min_stay: string
           name: string
           pull_quote: string | null
@@ -147,6 +148,7 @@ export type Database = {
           is_published?: boolean
           location: string
           long_copy?: string[]
+          map_url?: string | null
           min_stay: string
           name: string
           pull_quote?: string | null
@@ -176,6 +178,7 @@ export type Database = {
           is_published?: boolean
           location?: string
           long_copy?: string[]
+          map_url?: string | null
           min_stay?: string
           name?: string
           pull_quote?: string | null
