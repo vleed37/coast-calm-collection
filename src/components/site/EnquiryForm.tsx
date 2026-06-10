@@ -103,12 +103,12 @@ export function EnquiryForm({
         const { data: newId, error } = await supabase.rpc("submit_enquiry", {
           p_name: parsed.data.name,
           p_email: parsed.data.email,
-          p_phone: parsed.data.phone,
-          p_property_of_interest: parsed.data.property_of_interest,
-          p_check_in: parsed.data.check_in,
-          p_check_out: parsed.data.check_out,
-          p_message: parsed.data.message,
-        });
+          p_phone: parsed.data.phone ?? undefined,
+          p_property_of_interest: parsed.data.property_of_interest ?? undefined,
+          p_check_in: parsed.data.check_in ?? undefined,
+          p_check_out: parsed.data.check_out ?? undefined,
+          p_message: parsed.data.message ?? undefined,
+        } as never);
         if (error || !newId) {
           setSubmitting(false);
           toast.error("Couldn't send right now. Please try again.");
