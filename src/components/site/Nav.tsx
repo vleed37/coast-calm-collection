@@ -7,6 +7,7 @@ const links = [
   { to: "/guide", label: "Local Guide" },
   { to: "/booking-policy", label: "Booking Policy" },
   { to: "/contact", label: "Contact" },
+  { to: "/enquire", label: "Enquire" },
 ] as const;
 
 export function Nav({ transparentOverHero = false }: { transparentOverHero?: boolean }) {
@@ -47,7 +48,7 @@ export function Nav({ transparentOverHero = false }: { transparentOverHero?: boo
           ))}
         </nav>
         <Link
-          to="/contact"
+          to="/enquire"
           className={`smallcaps px-6 py-2.5 border transition-colors duration-300 text-[0.75rem] whitespace-nowrap self-center md:self-auto ${
             solid
               ? "bg-ocean text-cream border-ocean hover:bg-ink hover:border-ink"
