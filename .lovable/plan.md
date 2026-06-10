@@ -1,19 +1,35 @@
-## Problem
+## Home page round 2 edits
 
-The contact form posts to `rpc/submit_enquiry` and gets a 404 (`PGRST202`). supabase-js strips `undefined` values, so when phone/property/dates/message are empty the request body only includes the filled fields. PostgREST then can't find an overload matching the supplied param names.
+All changes confined to `src/routes/index.tsx`. Keep existing layout, fonts, cream palette, two-column structure, animation, and link styling.
 
-## Fix
+### 1. Upload images as CDN assets
 
-Two small changes:
+- `lovable-assets create --file /mnt/user-uploads/HOMEPAGE_COLLECTION_OF_HOME.jpg --filename collection-peninsula.jpg > src/assets/collection-peninsula.jpg.asset.json`
+- `lovable-assets create --file /mnt/user-uploads/HOME_PAGE_BEYOND_THE_FRONT_DOOR.jpg --filename guide-bird-beach.jpg > src/assets/guide-bird-beach.jpg.asset.json`
 
-1. **Database** — add `DEFAULT NULL` to every parameter of `public.submit_enquiry` so PostgREST resolves the function when optional params are omitted. (Run as a new migration; existing function is replaced with `CREATE OR REPLACE`.)
+### 2. Edits to `src/routes/index.tsx`
 
-2. **Client (`src/components/site/EnquiryForm.tsx`)** — pass `null` (not `undefined`) for empty optional fields so supabase-js actually sends them in the JSON body. This works whether or not the DB change is in place, and is the more robust of the two.
+**A. Hero sub-line** — change "A small collection of homes on the West Coast." → "A small collection of holiday homes on the West Coast."
 
-After both, submitting the form will insert a row, return the new id, and trigger `notify-enquiry` to send the Resend email to `rental@lonebullgroup.co.za`.
+**B. Manifesto** — replace paragraph with:
+> There are few places in the world where the ocean greets you at sunrise and bids you farewell at sunset. *Stay slowly.*
 
-## Verification
+Keep "Stay slowly." in existing italic ocean-blue style.
 
-- Submit a test enquiry from `/contact` and confirm the success toast.
-- Check the admin Enquiries list shows the new row.
-- Confirm the email arrives (or check `notify-enquiry` logs if the Resend sender/recipient pairing still needs domain verification — separate issue).
+**C. Replace "Things to Do / The coast, in motion" section with "Our Collection"** (same image-right / text-left layout):
+- Kicker: `Our Collection` (warmth/gold)
+- Heading: `Self-Catering Homes` (ocean blue — apply `text-ocean` to match existing blue header treatment used elsewhere; current display headings are ink — explicitly add `text-ocean` here per spec)
+- Body: the supplied paragraph about St Helena Bay and Shelley Point.
+- Link: `View the Collection →` → `/properties`
+- Image: `collection-peninsula.jpg` asset
+
+**D. Update Local Guide teaser** (image-left / text-right, already in place):
+- Keep kicker "Local Guide"
+- Heading: `The coast, in motion.`
+- Body: "Long beaches and tidal pools, kayaks at first light, horses across the dunes, fairways above the sea, and unfussy local tables that close when the sun goes down."
+- Keep `Explore the Guide →` link
+- Image: `guide-bird-beach.jpg` asset (replace unsplash URL)
+
+### Verification
+
+Visit `/` in preview, confirm hero subline, manifesto copy, Our Collection section with peninsula image links to `/properties`, and Local Guide teaser shows bird-on-beach image with new copy.
