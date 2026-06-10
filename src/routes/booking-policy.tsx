@@ -75,7 +75,7 @@ function PolicyPage() {
       <section className="max-w-2xl mx-auto px-6 pb-20 md:pb-32 pt-4">
         <Reveal>
           <span className="smallcaps text-warmth">The Fine Print</span>
-          <h1 className="font-display text-5xl md:text-7xl mt-4 font-light leading-[1]">Booking Policy</h1>
+          <h1 className="font-display text-6xl md:text-8xl mt-4 font-light leading-[0.95]">Booking Policy</h1>
           <p className="mt-8 text-lg text-ink/80 leading-[1.8]">
             We keep this short and human. If anything is unclear, write to us.
           </p>

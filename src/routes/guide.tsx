@@ -169,7 +169,7 @@ function GuidePage() {
         <div className="max-w-[1320px] mx-auto">
           <Reveal>
             <span className="smallcaps text-warmth">Local Guide</span>
-            <h1 className="font-display text-6xl md:text-8xl lg:text-9xl mt-4 font-light leading-[0.95]">
+            <h1 className="font-display text-6xl md:text-8xl mt-4 font-light leading-[0.95]">
               The Coastline,<br /><em className="font-light">Curated.</em>
             </h1>
             <p className="mt-10 max-w-xl text-lg text-ink/80">

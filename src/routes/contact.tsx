@@ -29,7 +29,7 @@ function ContactPage() {
         <div className="bg-cream py-20 md:py-24 px-6 md:px-16 flex items-center">
           <div className="w-full max-w-lg">
             <span className="smallcaps text-warmth">Contact</span>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl mt-4 font-light leading-[1.05]">Get in touch.</h1>
+            <h1 className="font-display text-6xl md:text-8xl mt-4 font-light leading-[0.95]">Get in touch.</h1>
 
             <div className="mt-12 space-y-10 text-ink/80">
               <div>

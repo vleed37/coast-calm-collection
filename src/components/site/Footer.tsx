@@ -13,6 +13,7 @@ export function Footer() {
           ))}
         </nav>
         <p className="font-display italic text-xl text-ink/70">Made on the West Coast.</p>
+        <p className="smallcaps text-ink/50">A division of Lone Bull Group</p>
         <p className="smallcaps text-ink/50">© {new Date().getFullYear()} Lone Bull Rentals. All rights reserved.</p>
       </div>
     </footer>
