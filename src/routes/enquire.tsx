@@ -31,7 +31,7 @@ function EnquirePage() {
         <div className="bg-cream py-20 md:py-24 px-6 md:px-16 flex items-center">
           <div className="w-full max-w-lg">
             <span className="smallcaps text-warmth">Enquire</span>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl mt-4 font-light leading-[1.05]">Begin a conversation.</h1>
+            <h1 className="font-display text-6xl md:text-8xl mt-4 font-light leading-[0.95]">Begin a conversation.</h1>
             <p className="mt-6 text-ink/80">We reply within a day, often sooner.</p>
 
             {sent ? (
