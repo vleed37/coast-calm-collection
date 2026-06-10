@@ -263,13 +263,13 @@ export type Database = {
     Functions: {
       submit_enquiry: {
         Args: {
-          p_check_in: string
-          p_check_out: string
+          p_check_in?: string
+          p_check_out?: string
           p_email: string
-          p_message: string
+          p_message?: string
           p_name: string
-          p_phone: string
-          p_property_of_interest: string
+          p_phone?: string
+          p_property_of_interest?: string
         }
         Returns: string
       }
