@@ -173,7 +173,7 @@ function GuidePage() {
               The Coastline,<br /><em className="font-light">Curated.</em>
             </h1>
             <p className="mt-10 max-w-xl text-lg text-ink/80">
-              The beaches, kayaks, horses, fairways and tables we send our own guests to — kept short on purpose.
+              A thoughtful selection of beaches, dining spots, and local experiences along the West Coast.
             </p>
           </Reveal>
         </div>
@@ -183,7 +183,6 @@ function GuidePage() {
         <div className="max-w-[1320px] mx-auto">
           {SECTIONS.map((s, i) => {
             const reverse = i % 2 === 1;
-            const num = String(i + 1).padStart(2, "0");
             return (
               <Reveal key={s.id}>
                 <article
@@ -201,7 +200,6 @@ function GuidePage() {
                     />
                   </div>
                   <div className="md:col-span-6 flex flex-col justify-center">
-                    <span className="smallcaps text-warmth">Section {num}</span>
                     <h2 className="font-display text-3xl md:text-4xl lg:text-5xl mt-5 font-light leading-[1.1]">
                       {s.title}
                     </h2>

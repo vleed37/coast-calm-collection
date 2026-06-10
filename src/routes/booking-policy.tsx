@@ -7,7 +7,7 @@ import { Reveal } from "@/components/site/Reveal";
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <Reveal>
-      <section className="pb-12 border-b border-mist last:border-0">
+      <section className="pb-6 border-b border-mist last:border-0">
         <h2 className="font-display text-3xl md:text-4xl font-light">{title}</h2>
         <div className="mt-6 text-base text-ink/85" style={{ lineHeight: 1.8 }}>
           {children}
@@ -58,11 +58,10 @@ export const Route = createFileRoute("/booking-policy")({
       path: "/booking-policy",
       type: "article",
       structuredData: faqGraph([
-        { q: "Reservations", a: "Houses are held by enquiry. We confirm in writing, often within the day. A reservation is held for seven days from confirmation while the deposit is arranged." },
         { q: "Payment Terms", a: "A 50% deposit secures the dates. The balance is due 30 days before arrival. Bookings made within 30 days of arrival are payable in full at the time of booking." },
         { q: "Cancellation", a: "Standard and holiday-season cancellation policies apply. We strongly recommend travel insurance." },
         { q: "House Rules", a: "Maximum 4 guests. No smoking, parties, or pets. Quiet hours 10 PM – 7 AM. Minimum booking age 21." },
-        { q: "Check-In & Check-Out", a: "Check-in from 2:00 PM. Check-out strictly by 10:00 AM." },
+        { q: "Check-In & Check-Out", a: "Check-in from 2:00 PM. Check-out strictly by 10:00 AM. We kindly ask that guests adhere to the above times, so that our team can prepare the space flawlessly for our next arrivals. Any times outside of the above must please be arranged directly with the property manager." },
       ]),
     }),
   component: PolicyPage,
@@ -82,13 +81,7 @@ function PolicyPage() {
           </p>
         </Reveal>
 
-        <div className="mt-20 space-y-12">
-          <Section title="Reservations">
-            <p>
-              Houses are held by enquiry. We confirm in writing, often within the day. A reservation is held for seven days from confirmation while the deposit is arranged.
-            </p>
-          </Section>
-
+        <div className="mt-12 space-y-6">
           <Section title="Rates & Minimum Stay">
             <p>
               All rates are based on exclusive use of the property and are subject to seasonal variation. Guests staying 7 nights or longer may qualify for discounted rates during off-peak periods. Minimum stays apply year-round: a standard 2-night minimum, with extended minimums of 3 to 7 nights during peak holiday seasons.
@@ -143,13 +136,13 @@ function PolicyPage() {
 
           <Section title="Check-In & Check-Out">
             <p>
-              Check-in from 2:00 PM. Check-out strictly by 10:00 AM. Any times outside of these must be arranged directly with the property manager.
+              Check-in from 2:00 PM. Check-out strictly by 10:00 AM. We kindly ask that guests adhere to the above times, so that our team can prepare the space flawlessly for our next arrivals. Any times outside of the above must please be arranged directly with the property manager.
             </p>
           </Section>
 
           <Section title="Documents">
             <p>
-              All guests are required to sign our Terms & Conditions before arrival and submit a copy of their ID or driver&apos;s licence, along with confirmation of their vehicle details.
+              All guests are required to sign our Terms &amp; Conditions before arrival and submit a copy of their ID or driver&apos;s licence, along with confirmation of their vehicle details by the latest 24-hours before arrival.
             </p>
           </Section>
         </div>

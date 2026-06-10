@@ -38,7 +38,7 @@ function PropertiesPage() {
             <span className="smallcaps text-warmth">Houses</span>
             <h1 className="font-display text-6xl md:text-8xl mt-4 font-light leading-[0.95]">The Collection</h1>
             <p className="mt-8 max-w-xl text-lg text-ink/80">
-              Four houses, kept few on purpose. Each one offered for a few weeks each year.
+              Explore our collection of self-catering West Coast properties, each offering comfort, privacy, and the perfect coastal escape.
             </p>
           </Reveal>
         </div>

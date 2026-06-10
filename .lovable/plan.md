@@ -1,54 +1,25 @@
-## Property detail pages — round 2 edits
+## Round 2 content edits — Properties, Local Guide, Booking Policy
 
-### 1. Upload assets
+### 1. 37 Wanoo Drive cover image
+- Upload via lovable-assets: `lovable-assets create --file /mnt/user-uploads/37_WANOO_COVER_IMAGE.jpeg --filename 37-wanoo-cover.jpg > src/assets/37-wanoo-cover.jpg.asset.json`
+- Data update on `public.properties` where `slug='37-wanoo-drive'`: set both `setting_image` and `hero_image` to the new asset URL (mirroring the Sage & Salt approach — `setting_image` drives the listing card and detail hero).
 
-- `lovable-assets create --file /mnt/user-uploads/SAGE_SALT_COVER_IMAGE.jpg --filename sage-and-salt-cover.jpg > src/assets/sage-and-salt-cover.jpg.asset.json`
-- `lovable-assets create --file /mnt/user-uploads/WEST_COAST_MAP_1.png --filename west-coast-map.png > src/assets/west-coast-map.png.asset.json`
+### 2. Properties page — `src/routes/properties.tsx` (A)
+Replace line 41 copy "Four houses, kept few on purpose. Each one offered for a few weeks each year." with:
+"Explore our collection of self-catering West Coast properties, each offering comfort, privacy, and the perfect coastal escape."
 
-### 2. Database migration
+### 3. Local Guide page — `src/routes/guide.tsx` (C + D)
+- Replace the subheading paragraph (line 176) with: "A thoughtful selection of beaches, dining spots, and local experiences along the West Coast."
+- Remove the eyebrow `<span className="smallcaps text-warmth">Section {num}</span>` (line 204) and the now-unused `num = String(i+1)...` line (186). Keep all other layout.
 
-Add `map_url` to `public.properties`:
+### 4. Booking Policy page — `src/routes/booking-policy.tsx` (E + F + G + H)
+- **E**: Delete the entire "Reservations" `<Section>` block (lines 86–90) and remove the corresponding entry from the `faqGraph` structured data (line 61).
+- **F**: Tighten vertical spacing — change the section list container `mt-20 space-y-12` → `mt-12 space-y-6`, and tighten each Section's bottom padding `pb-12` → `pb-6`.
+- **G**: Replace Check-In & Check-Out body text (line 146) with: "Check-in from 2:00 PM. Check-out strictly by 10:00 AM. We kindly ask that guests adhere to the above times, so that our team can prepare the space flawlessly for our next arrivals. Any times outside of the above must please be arranged directly with the property manager." Also update the matching `faqGraph` `a` string so SEO mirrors the visible copy.
+- **H**: Replace Documents body text (line 152) with: "All guests are required to sign our Terms & Conditions before arrival and submit a copy of their ID or driver's licence, along with confirmation of their vehicle details by the latest 24-hours before arrival."
 
-```sql
-ALTER TABLE public.properties ADD COLUMN map_url text;
-```
-
-Then content updates (same migration):
-
-**Sage & Salt** — replace cover (`setting_image` drives both hero and listing card per current mapping) and update features array:
-- `setting_image` → new sage-and-salt asset URL
-- `features` → remove `"2-bedroom self-catering home, sleeps up to 4 guests"` and `"2 modern bathrooms"`; prepend three new lines: `"Main bedroom: 1 King bed and en-suite bathroom"`, `"Second bedroom: 2 Single beds"`, `"1 full bathroom"`.
-
-**Sky & Sea** — features only, same three-line replacement.
-
-**10 Seaview Close** — update `setting_copy` to the new Shelley Point Estate write-up; update the `experience_vignettes` jsonb so the "Estate Lifestyle" body has the contact line `(022 742 1037 · info@... · ...)` stripped, keeping the descriptive text.
-
-### 3. `src/lib/queries/properties.ts`
-
-Add `mapUrl: string | null` to the `Property` type; map from `row.map_url ?? null` in `mapRow`.
-
-### 4. `src/components/admin/PropertyForm.tsx`
-
-Add `map_url: z.string().url().or(z.literal("")).optional()` to schema, default `""`, register in `defaultValues`, load from `data.map_url ?? ""` in reset, include in `onSubmit` payload (`map_url: v.map_url || null`). Add a new field "Google Maps URL" in the **The Setting** section.
-
-### 5. `src/routes/properties_.$slug.tsx`
-
-**Overview tab (A + B)** — prepend a new booking block before "The Home":
-- Kicker `Booking` (keep), heading **removed** (no "Stays here.").
-- Same Check-In / Check-Out / Maximum Guests / Minimum Stay rows.
-- "Enquire about this house" button.
-- Followed by existing "The Home" / story / pull-quote / "The Experience" content.
-
-**Details tab** — remove the entire booking sub-block (lines ~272–300). Tab now ends after the features list.
-
-**Location tab (D)** — replace the `<CoastMap pin={pin} />` block with:
-- `<img src={westCoastMapAsset.url} alt="Map of South Africa's West Coast" />` (constrained max-w-xl mx-auto)
-- If `property.mapUrl` is truthy, render below: `<a href={property.mapUrl} target="_blank" rel="noopener noreferrer" className="… bg-ocean text-cream px-10 py-4 smallcaps hover:bg-ink transition-colors inline-block">View on Google Maps →</a>`. Hidden when empty.
-- Remove the now-unused `CoastMap` component, `PROPERTY_PINS` map, and `pin` derivation.
-
-### 6. Verification
-
-- `/properties/sage-and-salt`: cover image is the new pergola photo; Overview tab leads with booking box (no "Stays here."); Details tab has no booking box; Rooms tab shows the three new room points first; Location tab shows the map image (no button until `map_url` is set in admin).
-- `/properties/sky-and-sea`: Rooms tab shows the three new room points; map image on Location tab.
-- `/properties/10-seaview-close`: Location write-up is the new estate paragraph; Estate Lifestyle vignette no longer has the contact details; Rooms tab unchanged; map image on Location tab.
-- `/admin/properties/<id>`: new "Google Maps URL" field saves and reloads.
+### 5. Verification
+- `/properties`: new intro line under "The Collection"; 37 Wanoo card shows the new cover.
+- `/properties/37-wanoo-drive`: hero uses new cover.
+- `/guide`: new subheading; "SECTION 01/02…" eyebrows gone, section titles and content intact.
+- `/booking-policy`: starts with "Rates & Minimum Stay" after the intro; sections sit closer together; Check-In & Check-Out and Documents show the new wording.
