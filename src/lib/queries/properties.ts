@@ -17,6 +17,7 @@ export type Property = {
   pullQuote: string;
   experience: string; // legacy single-line summary (joined from vignettes)
   features: string[];
+  roomsBreakdown: string[];
   heroImage: string;
   gallery: string[];
   // extras
@@ -65,6 +66,7 @@ function mapRow(row: any): Property {
     pullQuote: row.pull_quote ?? "",
     experience: vignettes.map((v) => v.body).join(" "),
     features: row.features ?? [],
+    roomsBreakdown: row.rooms_breakdown ?? [],
     heroImage: hero,
     gallery,
     settingCopy: row.setting_copy ?? "",
