@@ -6,9 +6,9 @@ export function Footer() {
       <div className="max-w-[1320px] mx-auto flex flex-col items-center gap-8">
         <div className="font-display text-4xl md:text-5xl tracking-[0.2em] font-light">Lone Bull Rentals</div>
         <nav className="flex flex-wrap justify-center gap-x-8 gap-y-2 text-ink">
-          {["/", "/properties", "/guide", "/booking-policy", "/contact"].map((to, i) => (
+          {["/", "/properties", "/guide", "/booking-policy", "/contact", "/enquire"].map((to, i) => (
             <Link key={to} to={to} className="smallcaps link-underline">
-              {["Home", "Properties", "Local Guide", "Booking Policy", "Contact"][i]}
+              {["Home", "Properties", "Local Guide", "Booking Policy", "Contact", "Enquire"][i]}
             </Link>
           ))}
         </nav>

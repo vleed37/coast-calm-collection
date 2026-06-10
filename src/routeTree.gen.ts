@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PropertiesRouteImport } from './routes/properties'
 import { Route as GuideRouteImport } from './routes/guide'
+import { Route as EnquireRouteImport } from './routes/enquire'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BookingPolicyRouteImport } from './routes/booking-policy'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -35,6 +36,11 @@ const PropertiesRoute = PropertiesRouteImport.update({
 const GuideRoute = GuideRouteImport.update({
   id: '/guide',
   path: '/guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnquireRoute = EnquireRouteImport.update({
+  id: '/enquire',
+  path: '/enquire',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -118,6 +124,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/booking-policy': typeof BookingPolicyRoute
   '/contact': typeof ContactRoute
+  '/enquire': typeof EnquireRoute
   '/guide': typeof GuideRoute
   '/properties': typeof PropertiesRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
@@ -136,6 +143,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/booking-policy': typeof BookingPolicyRoute
   '/contact': typeof ContactRoute
+  '/enquire': typeof EnquireRoute
   '/guide': typeof GuideRoute
   '/properties': typeof PropertiesRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
@@ -156,6 +164,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/booking-policy': typeof BookingPolicyRoute
   '/contact': typeof ContactRoute
+  '/enquire': typeof EnquireRoute
   '/guide': typeof GuideRoute
   '/properties': typeof PropertiesRoute
   '/admin/enquiries': typeof AdminEnquiriesRoute
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/booking-policy'
     | '/contact'
+    | '/enquire'
     | '/guide'
     | '/properties'
     | '/admin/enquiries'
@@ -195,6 +205,7 @@ export interface FileRouteTypes {
     | '/'
     | '/booking-policy'
     | '/contact'
+    | '/enquire'
     | '/guide'
     | '/properties'
     | '/admin/enquiries'
@@ -214,6 +225,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/booking-policy'
     | '/contact'
+    | '/enquire'
     | '/guide'
     | '/properties'
     | '/admin/enquiries'
@@ -234,6 +246,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   BookingPolicyRoute: typeof BookingPolicyRoute
   ContactRoute: typeof ContactRoute
+  EnquireRoute: typeof EnquireRoute
   GuideRoute: typeof GuideRoute
   PropertiesRoute: typeof PropertiesRoute
   AdminLoginRoute: typeof AdminLoginRoute
@@ -254,6 +267,13 @@ declare module '@tanstack/react-router' {
       path: '/guide'
       fullPath: '/guide'
       preLoaderRoute: typeof GuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/enquire': {
+      id: '/enquire'
+      path: '/enquire'
+      fullPath: '/enquire'
+      preLoaderRoute: typeof EnquireRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -404,6 +424,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   BookingPolicyRoute: BookingPolicyRoute,
   ContactRoute: ContactRoute,
+  EnquireRoute: EnquireRoute,
   GuideRoute: GuideRoute,
   PropertiesRoute: PropertiesRoute,
   AdminLoginRoute: AdminLoginRoute,
